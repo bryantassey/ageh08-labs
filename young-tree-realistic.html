@@ -36,7 +36,7 @@ svg{width:100%;height:auto}
 </head>
 <body>
 <header>
-  <small>AGEH-08 • TREE PRUNING LAB • INSTRUCTOR REVIEW PROTOTYPE • REVISION 4 — THREE-YEAR GROWTH</small>
+  <small>AGEH-08 • TREE PRUNING LAB • INSTRUCTOR REVIEW PROTOTYPE • REVISION 6 — TWO-FOOT GROWTH SCALE</small>
   <h1>Prune, Predict, Revisit</h1>
   Case 1 / Develop a young tree
 </header>
@@ -45,7 +45,7 @@ svg{width:100%;height:auto}
   <div class="card">
     <h2>Build structure without rushing clearance</h2>
     <p>This fictional, established young shade tree is growing beside a future walkway. Train it toward one dominant leader, keep useful future scaffold branches, and manage temporary low branches. The walkway is not open yet. You do not need full clearance today.</p>
-    <p class="muted">Prune the tree, then compare plausible responses after one, two, and three growing seasons with no further pruning. Follow new shoots as they extend and thicken. Growth amounts and shoot numbers illustrate the differences between cuts; they are not species-specific predictions.</p>
+    <p class="muted">Prune the tree, then compare it with one plausible response after one growing season. See how retained laterals extend, heading cuts produce new shoots, and removed branches stay absent in this scenario. For this exercise, the original central leader segment represents about 2 feet, and major growing tips add about 2 feet in one season. A retained 2-foot segment therefore reaches about 4 feet. Smaller secondary shoots remain shorter. This is an illustrative growth assumption, not a species-specific prediction.</p>
 
     <label for="name">Your name</label>
     <input id="name" autocomplete="name">
@@ -60,7 +60,7 @@ svg{width:100%;height:auto}
         <div id="stageButtons" aria-label="Illustrated stage"></div>
         <div id="tree"></div>
         <p id="caption" class="muted"></p>
-        <p class="muted">Select a letter on the tree or use the branch buttons. Dashed lines indicate removed material. The blue fork marks a possible reduction point. Green segments show growth added since pruning. Removed branches stay absent in this scenario; real trees may sometimes produce sprouts. The three-year response is a teaching scenario, not a guaranteed prediction.</p>
+        <p class="muted">Select a letter on the tree or use the branch buttons. Dashed lines indicate removed material. The blue fork marks a possible reduction point. Green segments show growth added since pruning. Removed branches stay absent in this scenario; real trees may sometimes produce sprouts. The one-year response is a teaching scenario, not a guaranteed prediction.</p>
       </div>
 
       <div class="card">
@@ -99,9 +99,9 @@ svg{width:100%;height:auto}
 
   <div class="card">
     <h2>Predict before revealing the response</h2>
-    <label for="prediction">Over three growing seasons, what do you expect to happen to the leader, shortened branches, removed branches, and future clearance?</label>
+    <label for="prediction">After one growing season, what do you expect to happen to the leader, shortened branches, removed branches, and future clearance?</label>
     <textarea id="prediction"></textarea>
-    <button id="reveal" class="primary">Commit plan and explore years 1–3</button>
+    <button id="reveal" class="primary">Commit plan and show one-year response</button>
     <p class="muted">Make and explain a decision for all five branches first. Your first committed plan is kept for comparison.</p>
     <p id="commitStatus" role="status" tabindex="-1"></p>
     <div id="feedback" aria-live="polite"></div>
@@ -109,7 +109,7 @@ svg{width:100%;height:auto}
 
   <div class="card">
     <h2>Reconsider and connect</h2>
-    <p>After viewing Years 1, 2, and 3, decide whether you would keep your plan or revise it at the next visit.</p>
+    <p>After viewing the one-year response, decide whether you would keep your plan or revise it at the next visit.</p>
     <label for="reflection">What would you keep or change, and what evidence led you there?</label>
     <textarea id="reflection"></textarea>
     <label for="calendar">Next-visit plan: What will you inspect at the next visit, and what would trigger action?</label>
@@ -142,6 +142,7 @@ svg{width:100%;height:auto}
 const $ = id => document.getElementById(id);
 const KEY = 'ageh08-young-tree-v2';
 
+const TWO_FEET = Math.hypot(282-280,65-302); // Original central leader segment represents 2 ft.
 const B = [
   {id:'A',title:'Central upright',base:[280,302],tip:[282,65],fork:[281,180],lat:[246,145],info:'A is the straight continuation of the trunk. It has an intact tip and no observed defect. It is a strong candidate for the dominant leader.'},
   {id:'B',title:'Competing upright',base:[280,302],tip:[390,92],fork:[337,202],lat:[391,187],info:'B arises near A and reaches a similar height. It is vigorous and competing with A. The marked lateral offers a way to shorten B while keeping part of its foliage.'},
@@ -155,7 +156,7 @@ let selected = 'A';
 
 try {
   const saved = JSON.parse(localStorage.getItem(KEY));
-  if (saved?.decisions) state = {...state, ...saved};
+  if (saved?.decisions) state = {...state, ...saved, year:1};
 } catch {}
 
 function persist(){
@@ -253,7 +254,7 @@ function annualExtension(base,tip,step,years,side=1){
     const end=extendPoint(base,tip,step*season), age=years-season+1;
     s+=curve(last,end,1.7+age*.65,season===years?'#47794a':'#75815a',side*2,false);
     const node=pointAlong(last,end,.55), sign=season%2?side:-side;
-    const L=12+age*9;
+    const L=35+age*22;
     const lateral=[node[0]+sign*L*.8,node[1]-L*.65];
     s+=curve(node,lateral,1+age*.45,'#628052',sign*3,false);
     if(age>=2){const q=pointAlong(node,lateral,.65);s+=curve(q,[q[0]-sign*(7+age*2),q[1]-10-age*3],1.2,'#628052',-sign*2,false);}
@@ -268,10 +269,10 @@ function drawResponseBranch(b,action,active,year=1){
     s+='<circle cx="'+b.base[0]+'" cy="'+b.base[1]+'" r="3.5" fill="#95765a"/>';
   }else if(action==='reduce'){
     s+=curve(b.base,b.fork,8+year*.65,c,3)+curve(b.fork,b.lat,4.5+year*.45,c,-3);
-    s+=annualExtension(b.fork,b.lat,17,year,b.id==='E'?-1:1);
+    s+=annualExtension(b.fork,b.lat,TWO_FEET,year,b.id==='E'?-1:1);
     // Two staggered lateral shoots on retained wood, never on the removed portion.
     for(let i=0;i<2;i++){
-      const q=pointAlong(b.fork,b.lat,.42+i*.32), sign=i?1:-1,L=9+year*9;
+      const q=pointAlong(b.fork,b.lat,.42+i*.32), sign=i?1:-1,L=20+year*32;
       const end=[q[0]+sign*L*.7,q[1]-L*.65];
       s+=curve(q,end,1.1+year*.45,'#628052',sign*3,false);
       if(year>=2){const n=pointAlong(q,end,.66);s+=curve(n,[n[0]-sign*10,n[1]-8-year*3],1.1,'#628052',2,false);}
@@ -281,8 +282,9 @@ function drawResponseBranch(b,action,active,year=1){
     const nodes=[.88,.94,.81].map(t=>pointAlong(b.base,heading,t));
     const offsets=[[-25,-45],[20,-53],[37,-26]],dir=b.tip[0]<b.base[0]?-1:1;
     nodes.forEach((n,i)=>{
-      const first=[heading[0]+dir*offsets[i][0],heading[1]+offsets[i][1]];
-      s+=curve(n,first,1.7+year*.7,'#75815a',i===1?5:-5,false);
+      const target=[heading[0]+dir*offsets[i][0],heading[1]+offsets[i][1]];
+      const first=extendPoint(n,target,TWO_FEET*(i===1?1:i===0?.9:.8)-Math.hypot(target[0]-n[0],target[1]-n[1]));
+      s+=curve(n,first,1.7+year*.7,'#47794a',i===1?5:-5,false);
       // The same three shoots lengthen and develop smaller side branches in later years.
       s+=annualExtension(n,first,18+i*3,year-1,i%2?1:-1);
       const q=pointAlong(n,first,.65),end=[q[0]+(i%2?1:-1)*(8+year*5),q[1]-10-year*5];
@@ -291,17 +293,17 @@ function drawResponseBranch(b,action,active,year=1){
   }else{
     s+=curve(b.base,b.tip,8+year*.65,c,5)+curve(b.fork,b.lat,4.3+year*.4,c,-3);
     s+=twigs(b.base,b.tip,b.id==='A'?-1:1,.7+year*.1);
-    s+=annualExtension(b.base,b.tip,b.id==='A'?43:23,year,b.id==='A'?-1:1);
-    s+=annualExtension(b.fork,b.lat,10,year,-1);
+    s+=annualExtension(b.base,b.tip,TWO_FEET,year,b.id==='A'?-1:1);
+    s+=annualExtension(b.fork,b.lat,TWO_FEET*.3,year,-1);
   }
   return s+labelSVG(b,active)+'<\/g>';
 }
 function responseText(b,action,year=1){
-  const period='Year '+year+': ';
+  const period='One year later: ';
   const msgs={
-    retain:b.id==='A'?'The intact leader extends upward each season. Earlier extensions remain, with staggered side branches developing below the growing tip.':'The branch remains at its original attachment height. Its tip and laterals extend, and older growth thickens.',
-    reduce:year===1?'The retained lateral carries extension growth, with small side shoots on retained wood. The removed section is absent.': 'The retained lateral and its smaller side shoots have lengthened and thickened. Reassess subordination and future clearance; the removed section has not returned.',
-    heading:year===1?'Three unequal shoots illustrate a possible response from buds below the heading cut. These are new competing shoots, not the original branch returning.':'The same shoots below the heading cut are now longer, thicker, and developing their own laterals. Consider whether this renewed competition serves your objective.',
+    retain:b.id==='A'?'The original 2-foot leader segment adds about 2 feet of extension, reaching about 4 feet from its original attachment. The green extension has smaller side shoots.':'The branch remains at its original attachment height. Its main tip adds about 2 feet, smaller laterals develop, and older growth thickens.',
+    reduce:year===1?'The retained lateral carries about 2 feet of extension growth, with smaller side shoots on retained wood. The removed section is absent.': 'The retained lateral and its smaller side shoots have lengthened and thickened. Reassess subordination and future clearance; the removed section has not returned.',
+    heading:year===1?'Three vigorous shoots, roughly 1.6–2 feet long, illustrate a possible response from buds below the heading cut. These are new competing shoots, not the original branch returning.':'The same shoots below the heading cut are now longer, thicker, and developing their own laterals. Consider whether this renewed competition serves your objective.',
     remove:'The entire branch remains absent, including all its former twigs. No replacement shoot is modeled at this attachment. Check actual trees for sprouts and wound response.'
   };
   return period+(msgs[action]||msgs.retain);
@@ -322,7 +324,7 @@ function planReviewNote(){
 
 function render(){
   const committed = !!state.committed;
-  $('stageButtons').innerHTML = '<button data-stage="after" aria-pressed="'+(state.stage==='after')+'">Immediately after pruning<\/button>' + [1,2,3].map(y=>'<button data-stage="response" data-year="'+y+'" aria-pressed="'+(state.stage==='response'&&state.year===y)+'" '+(committed?'':'disabled')+'>Year '+y+'<\/button>').join('');
+  $('stageButtons').innerHTML = '<button data-stage="after" aria-pressed="'+(state.stage==='after')+'">Immediately after pruning<\/button>' + [1].map(y=>'<button data-stage="response" data-year="'+y+'" aria-pressed="'+(state.stage==='response'&&state.year===y)+'" '+(committed?'':'disabled')+'>One year later<\/button>').join('');
   document.querySelectorAll('[data-stage]').forEach(btn=>{
     btn.onclick=()=>{
       if(btn.disabled)return;
@@ -335,7 +337,8 @@ function render(){
     };
   });
 
-  let out = '<svg viewBox="-30 -115 640 705" role="img" aria-label="Young tree with five selectable branches A through E"><rect x="-30" y="-115" width="640" height="705" fill="#f1f6ed"/><path d="M390 590 L430 480 L525 480 L550 590" fill="#deded7"/><text x="379" y="568" font-size="15">Future walkway<\/text><path d="M40 528 Q280 510 535 528" stroke="#a0b493" fill="none"/><path d="M268 520 C282 466 278 369 280 302" stroke="#75634d" stroke-width="'+(state.stage==='response' ? 21 : 19)+'" fill="none" stroke-linecap="round"/>';
+  const view=state.stage==='response'?'-250 -280 1080 900':'-30 -115 640 705';
+  let out = '<svg viewBox="'+view+'" role="img" aria-label="Young tree with five selectable branches A through E"><rect x="-250" y="-280" width="1080" height="900" fill="#f1f6ed"/><path d="M390 590 L430 480 L525 480 L550 590" fill="#deded7"/><text x="379" y="568" font-size="15">Future walkway<\/text><path d="M40 528 Q280 510 535 528" stroke="#a0b493" fill="none"/><path d="M268 520 C282 466 278 369 280 302" stroke="#75634d" stroke-width="'+(state.stage==='response' ? 21 : 19)+'" fill="none" stroke-linecap="round"/>';
 
   for (const b of B) {
     const action = (state.stage === 'response' ? (state.committed?.[b.id]?.action || 'retain') : (state.decisions[b.id]?.action || 'retain'));
@@ -344,7 +347,7 @@ function render(){
       : drawPrunedBranch(b, action, selected === b.id);
   }
 
-  out += '<\/svg>';
+  out += '<g aria-label="Scale: two feet"><path d="M20 550 h'+TWO_FEET+' M20 542 v16 M'+(20+TWO_FEET)+' 542 v16" stroke="#002855" stroke-width="3" fill="none"/><text x="20" y="580" font-size="18" fill="#002855">2 ft — illustrative scale<\/text><\/g><\/svg>';
   $('tree').innerHTML = out;
 
   document.querySelectorAll('[data-svg]').forEach(el => {
@@ -359,7 +362,7 @@ function render(){
 
   $('caption').textContent = state.stage === 'after'
     ? 'Immediately after pruning: saved decisions update the tree. Removal cuts stay removed, reduction cuts shorten back to a lateral, and heading cuts shorten without leaving a retained lateral.'
-    : 'Year '+state.year+': follow the green growth. Reduction extends through a retained lateral; heading produces competing shoots below the cut. Removed branches stay absent. The scale and original attachment positions stay fixed.';
+    : 'One year later: follow the green growth. Reduction extends through a retained lateral; heading produces competing shoots below the cut. Removed branches stay absent. This view is zoomed out to fit about 2 feet of new extension. Use the 2-foot scale bar to compare sizes. Original attachments stay in place.';
 
   $('summary').innerHTML = B.map(b => {
     const action = state.decisions[b.id]?.action || 'not decided';
@@ -369,7 +372,7 @@ function render(){
   $('feedback').replaceChildren();
   if (state.committed) {
     const heading = document.createElement('h3');
-    heading.textContent = state.stage === 'response' ? 'Year '+state.year+' response' : 'Committed pruning plan';
+    heading.textContent = state.stage === 'response' ? 'One-year response' : 'Committed pruning plan';
     $('feedback').append(heading);
 
     for (const b of B) {
@@ -423,7 +426,7 @@ $('reveal').onclick = () => {
 
   const missing = [];
   if (!state.fields.objective?.trim()) missing.push('the objective at the top');
-  if (!state.fields.prediction?.trim()) missing.push('your three-year prediction');
+  if (!state.fields.prediction?.trim()) missing.push('your one-year prediction');
   for (const b of B) {
     if (!state.decisions[b.id]?.action || !state.decisions[b.id]?.why?.trim()) {
       missing.push('a decision and explanation for branch ' + b.id);
@@ -452,7 +455,7 @@ $('reveal').onclick = () => {
   state.responseViewed = true;
   persist();
   render();
-  $('commitStatus').textContent = 'Plan committed. Year 1 is open. Compare Years 2 and 3 with the buttons above the tree.';
+  $('commitStatus').textContent = 'Plan committed. The one-year response is open. Use the two buttons above the tree to compare before and after growth.';
   $('stageButtons').scrollIntoView({behavior:'smooth', block:'start'});
   const responseBtn = document.querySelector('[data-stage="response"]');
   if (responseBtn) responseBtn.focus();
@@ -472,7 +475,7 @@ function report(){
     'FIRST COMMITTED PLAN\n' + jsonToText(state.first?.decisions) + '\n\n' +
     'CURRENT SAVED PLAN\n' + jsonToText(state.decisions) + '\n\n' +
     'LATEST COMMITTED PLAN\n' + jsonToText(state.committed) + '\n\n' +
-    'Years explored: ' + state.visited.join(', ') + '\n\n' +
+    'One-year response viewed: ' + (state.responseViewed ? 'Yes' : 'No') + '\n\n' +
     'Teaching scenarios, not predictions. Written reasoning is for instructor review.';
 }
 
@@ -480,8 +483,8 @@ function ready(){
   syncFields();
   persist();
   const dirty = JSON.stringify(state.decisions) !== JSON.stringify(state.committed);
-  if (!state.fields.name?.trim() || !state.fields.reflection?.trim() || !state.fields.calendar?.trim() || ![1,2,3].every(y=>state.visited.includes(y)) || !state.committed || dirty) {
-    $('exportStatus').textContent = 'Before submitting: enter your name, commit your latest plan, view all three years, and complete the reflection and next-visit plan. If you changed a decision, commit the plan again.';
+  if (!state.fields.name?.trim() || !state.fields.reflection?.trim() || !state.fields.calendar?.trim() || !state.responseViewed || !state.committed || dirty) {
+    $('exportStatus').textContent = 'Before submitting: enter your name, commit your latest plan, view the one-year response, and complete the reflection and next-visit plan. If you changed a decision, commit the plan again.';
     return false;
   }
   return true;
