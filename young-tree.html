@@ -1,99 +1,500 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prune, Predict, Revisit • Young tree</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prune, Predict, Revisit • Young tree</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#eef1ec;color:#243a32;font:16px/1.5 system-ui,sans-serif}header{background:#002855;color:white;padding:24px max(20px,calc((100vw - 1180px)/2));border-bottom:5px solid #c99700}h1{font-size:32px;margin:5px 0}h2{font-size:22px}main{max-width:1180px;margin:auto;padding:22px}.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:22px}.card{background:white;border:1px solid #d0d9d0;border-radius:12px;padding:20px;margin-bottom:18px}label{display:block;font-weight:650;margin-top:12px}input,textarea,select{width:100%;font:inherit;padding:10px;border:1px solid #82948b;border-radius:5px}textarea{min-height:85px}button{font:inherit;cursor:pointer;padding:10px 14px;border:1px solid #8a9c93;border-radius:6px;background:white;margin:4px}button.primary{background:#002855;color:white}button:focus-visible,a:focus-visible{outline:3px solid #c99700}button[aria-pressed=true]{background:#dcebcf;border:2px solid #365535}.note{background:#fff6d9;padding:12px;border-left:4px solid #c99700}.muted{color:#52655c;font-size:14px}svg{width:100%;height:auto}#feedback p{border-bottom:1px solid #ddd;padding-bottom:12px}.branch{cursor:pointer}.branch:hover{filter:drop-shadow(0 0 4px #c99700)}.report{display:none}@media(max-width:760px){.grid{display:block}h1{font-size:26px}}@media print{body>*{display:none!important}.report{display:block!important;white-space:pre-wrap;font:11pt/1.5 Arial;color:black} }
+*{box-sizing:border-box}
+body{margin:0;background:#eef1ec;color:#243a32;font:16px/1.5 system-ui,sans-serif}
+header{background:#002855;color:white;padding:24px max(20px,calc((100vw - 1180px)/2));border-bottom:5px solid #c99700}
+h1{font-size:32px;margin:5px 0}
+h2{font-size:22px;margin-top:0}
+h3{margin-bottom:8px}
+main{max-width:1180px;margin:auto;padding:22px}
+.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:22px}
+.card{background:white;border:1px solid #d0d9d0;border-radius:12px;padding:20px;margin-bottom:18px}
+label{display:block;font-weight:650;margin-top:12px}
+input,textarea,select{width:100%;font:inherit;padding:10px;border:1px solid #82948b;border-radius:5px;background:#fff}
+textarea{min-height:85px}
+button{font:inherit;cursor:pointer;padding:10px 14px;border:1px solid #8a9c93;border-radius:6px;background:white;margin:4px}
+button.primary{background:#002855;color:white}
+button:focus-visible,a:focus-visible{outline:3px solid #c99700}
+button[aria-pressed=true]{background:#dcebcf;border:2px solid #365535}
+button:disabled{opacity:.5;cursor:not-allowed}
+.note{background:#fff6d9;padding:12px;border-left:4px solid #c99700}
+.muted{color:#52655c;font-size:14px}
+.small{font-size:13px}
+svg{width:100%;height:auto}
+#feedback p{border-bottom:1px solid #ddd;padding-bottom:12px}
+.branch{cursor:pointer}
+.branch:hover{filter:drop-shadow(0 0 4px #c99700)}
+.report{display:none}
+@media(max-width:760px){.grid{display:block}h1{font-size:26px}}
+@media print{body>*{display:none!important}.report{display:block!important;white-space:pre-wrap;font:11pt/1.5 Arial;color:black}}
 </style>
-<header><small>AGEH-08 • TREE PRUNING LAB • INSTRUCTOR REVIEW PROTOTYPE • REVISION 2</small><h1>Prune, Predict, Revisit</h1>Case 1 / Develop a young tree</header>
+</head>
+<body>
+<header>
+  <small>AGEH-08 • TREE PRUNING LAB • INSTRUCTOR REVIEW PROTOTYPE • REVISION 3</small>
+  <h1>Prune, Predict, Revisit</h1>
+  Case 1 / Develop a young tree
+</header>
+
 <main>
-<div class="card"><h2>Build structure without rushing clearance</h2><p>This fictional, established young shade tree is growing beside a future walkway. Train it toward one dominant leader, keep useful future scaffold branches, and manage temporary low branches. The walkway is not open yet. You do not need full clearance today.</p><p class="muted">An original teaching illustration informed by the structural contrast in your Urban Tree Foundation references. Not a diagnosis of either photographed tree. Future views show plausible scenarios, not measured growth or guaranteed outcomes. Case 2, the mature tree, will be developed after instructor review.</p>
-<label for="name">Your name</label><input id="name" autocomplete="name">
-<label for="objective">Your objective: what should this visit accomplish?</label><textarea id="objective"></textarea></div>
-<div class="grid"><div><div class="card">
-<div id="years" aria-label="Illustrated year"></div><div id="tree"></div><p id="caption" class="muted"></p><p class="muted">Select a letter on the tree or use the branch buttons. All branches are shown without leaves to make structure visible. Dashed lines indicate removed material.</p>
-</div><div class="card"><h2>Compare the whole plan</h2><div id="summary"></div><p class="muted">Branch counts are not percentages of live foliage. Judge the size and role of the affected growth, not just the number of cuts.</p></div></div>
-<div class="card"><h2>Inspect and decide</h2><div id="branches"></div><h3 id="branchTitle"></h3><p id="detail"></p>
-<label for="action">What would you do?</label><select id="action"><option value="">Choose a decision</option><option value="retain">Retain and monitor</option><option value="reduce">Reduce to the marked lateral</option><option value="remove">Remove at the attachment</option></select>
-<label for="why">Why does this decision serve your objective?</label><textarea id="why"></textarea>
-<p class="muted">The blue fork marks a possible reduction location. Final cut placement and collar anatomy are reserved for the mature-tree case.</p>
-<button id="save" class="primary">Save this branch decision</button><p id="status" role="status"></p>
-</div></div>
-<div class="card"><h2>Predict before revealing the response</h2><label for="prediction">Over three years, what do you expect to happen to the leader, low branches, and clearance?</label><textarea id="prediction"></textarea><button id="reveal" class="primary">Commit plan and explore years 1–3</button><p class="muted">Make and explain a decision for all five branches first. Your first committed plan is kept for comparison.</p><p id="commitStatus" role="status" tabindex="-1"></p><div id="feedback" aria-live="polite"></div></div>
-<div class="card"><h2>Reconsider and connect</h2><p>After exploring all three years, change a branch decision if needed and commit the revised plan. Retain your original plan if you can defend it.</p><label for="reflection">What would you keep or change, and what evidence led you there?</label><textarea id="reflection"></textarea><label for="calendar">Maintenance calendar: What will you inspect at the next visit, and what would trigger action?</label><textarea id="calendar"></textarea>
-<h2>Submit your record</h2><p>Download readable text or use Print / Save as PDF, then upload the resulting file to Canvas. This page does not submit your work.</p><button id="download" class="primary">Download readable text for Canvas</button><button id="print">Print / Save as PDF for Canvas</button><p id="exportStatus" role="status"></p><p class="muted">Drafts save on this browser when storage is available. Download before switching devices or clearing browser data.</p><button id="reset">Clear draft and start again</button></div>
-<details class="card"><summary>Teaching references and model limits</summary><p>This case assumes a single-leader shade-tree objective, an established tree in adequate condition, no urgent clearance problem, and no hidden defects. Species, vigor, site conditions, attachment anatomy, and actual branch dimensions may change real pruning decisions.</p><ul><li><a href="https://ask.ifas.ufl.edu/publication/EP276" target="_blank" rel="noopener">UF/IFAS: A Plan for Training Shade Trees</a></li><li><a href="https://extension.colostate.edu/resource/structural-pruning-of-young-shade-trees/" target="_blank" rel="noopener">Colorado State University Extension: Structural Pruning of Young Shade Trees</a></li></ul><p>Feedback follows the selected actions. Written explanations are recorded for instructor review, not automatically graded. The simulation does not establish field-work competence.</p></details>
-</main><div id="report" class="report"></div>
+  <div class="card">
+    <h2>Build structure without rushing clearance</h2>
+    <p>This fictional, established young shade tree is growing beside a future walkway. Train it toward one dominant leader, keep useful future scaffold branches, and manage temporary low branches. The walkway is not open yet. You do not need full clearance today.</p>
+    <p class="muted">This version focuses on a simpler instructional sequence: prune the tree, then reveal one plausible response after one growing season. The goal is to show how different pruning cuts can lead to different structural outcomes.</p>
+
+    <label for="name">Your name</label>
+    <input id="name" autocomplete="name">
+
+    <label for="objective">Your objective: what should this visit accomplish?</label>
+    <textarea id="objective"></textarea>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div id="stageButtons" aria-label="Illustrated stage"></div>
+        <div id="tree"></div>
+        <p id="caption" class="muted"></p>
+        <p class="muted">Select a letter on the tree or use the branch buttons. Dashed lines indicate removed material. The blue fork marks a possible reduction point. The one-year response is a teaching scenario, not a guaranteed prediction.</p>
+      </div>
+
+      <div class="card">
+        <h2>Compare the whole plan</h2>
+        <div id="summary"></div>
+        <p class="muted">Branch counts are not percentages of live foliage. Judge the size and role of the affected growth, not just the number of cuts.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Inspect and decide</h2>
+        <div id="branches"></div>
+        <h3 id="branchTitle"></h3>
+        <p id="detail"></p>
+
+        <label for="action">What would you do?</label>
+        <select id="action">
+          <option value="">Choose a decision</option>
+          <option value="retain">Retain and monitor</option>
+          <option value="reduce">Reduction (drop-crotch) cut to the marked lateral</option>
+          <option value="heading">Heading cut</option>
+          <option value="remove">Removal cut at the attachment</option>
+        </select>
+
+        <label for="why">Why does this decision serve your objective?</label>
+        <textarea id="why"></textarea>
+
+        <p class="muted">Use <strong>reduction</strong> when you want to shorten a branch back to a retained lateral. Use <strong>heading</strong> when you want to shorten a branch without cutting back to a lateral, knowing that vigorous shoots may arise below the cut.</p>
+
+        <button id="save" class="primary">Save this branch decision</button>
+        <p id="status" role="status"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Predict before revealing the response</h2>
+    <label for="prediction">After one growing season, what do you expect to happen to the leader, shortened branches, removed branches, and future clearance?</label>
+    <textarea id="prediction"></textarea>
+    <button id="reveal" class="primary">Commit plan and show one-year response</button>
+    <p class="muted">Make and explain a decision for all five branches first. Your first committed plan is kept for comparison.</p>
+    <p id="commitStatus" role="status" tabindex="-1"></p>
+    <div id="feedback" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <h2>Reconsider and connect</h2>
+    <p>After viewing the one-year response, decide whether you would keep your plan or revise it at the next visit.</p>
+    <label for="reflection">What would you keep or change, and what evidence led you there?</label>
+    <textarea id="reflection"></textarea>
+    <label for="calendar">Next-visit plan: What will you inspect at the next visit, and what would trigger action?</label>
+    <textarea id="calendar"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>Submit your record</h2>
+    <p>Download readable text or use Print / Save as PDF, then upload the resulting file to Canvas. This page does not submit your work.</p>
+    <button id="download" class="primary">Download readable text for Canvas</button>
+    <button id="print">Print / Save as PDF for Canvas</button>
+    <p id="exportStatus" role="status"></p>
+    <p class="muted">Drafts save on this browser when storage is available. Download before switching devices or clearing browser data.</p>
+    <button id="reset">Clear draft and start again</button>
+  </div>
+
+  <details class="card">
+    <summary>Teaching references and model limits</summary>
+    <p>This case assumes a single-leader shade-tree objective, an established tree in adequate condition, no urgent clearance problem, and no hidden defects. Species, vigor, site conditions, attachment anatomy, and actual branch dimensions may change real pruning decisions.</p>
+    <ul>
+      <li><a href="https://ask.ifas.ufl.edu/publication/EP276" target="_blank" rel="noopener">UF/IFAS: A Plan for Training Shade Trees</a></li>
+      <li><a href="https://extension.colostate.edu/resource/structural-pruning-of-young-shade-trees/" target="_blank" rel="noopener">Colorado State University Extension: Structural Pruning of Young Shade Trees</a></li>
+    </ul>
+    <p>Feedback follows the selected actions. Written explanations are recorded for instructor review, not automatically graded. The simulation does not establish field-work competence.</p>
+  </details>
+</main>
+<div id="report" class="report"></div>
+
 <script>
-const $=id=>document.getElementById(id), KEY='ageh08-young-tree-v1';
-const B=[
-{id:'A',title:'Central upright',base:[280,302],tip:[282,65],fork:[281,180],lat:[246,145],info:'A is the straight continuation of the trunk. It has an intact tip and no observed defect. It is a strong candidate for the dominant leader.'},
-{id:'B',title:'Competing upright',base:[280,302],tip:[390,92],fork:[337,202],lat:[391,187],info:'B arises near A and reaches a similar height. It is vigorous and competing with A. The marked lateral offers a way to shorten B while keeping part of its foliage. No included bark is confirmed by this drawing.'},
-{id:'C',title:'Low temporary branch',base:[278,440],tip:[115,370],fork:[190,403],lat:[165,362],info:'C is low and small relative to the trunk. It is away from the future walkway and causes no current obstruction. Consider its temporary contribution before deciding when to remove it.'},
-{id:'D',title:'Future clearance branch',base:[278,392],tip:[471,335],fork:[373,364],lat:[395,322],info:'D reaches toward the future walkway. It is more vigorous than C. The path is not open yet; manage its growth while developing eventual clearance. A suitable lateral is marked.'},
-{id:'E',title:'Possible scaffold branch',base:[280,341],tip:[104,222],fork:[191,281],lat:[151,291],info:'E has useful spacing from other main attachments and extends away from the path. It is a potential permanent scaffold. Inspect attachment quality and spacing around the whole trunk in the field.'}
+const $ = id => document.getElementById(id);
+const KEY = 'ageh08-young-tree-v2';
+
+const B = [
+  {id:'A',title:'Central upright',base:[280,302],tip:[282,65],fork:[281,180],lat:[246,145],info:'A is the straight continuation of the trunk. It has an intact tip and no observed defect. It is a strong candidate for the dominant leader.'},
+  {id:'B',title:'Competing upright',base:[280,302],tip:[390,92],fork:[337,202],lat:[391,187],info:'B arises near A and reaches a similar height. It is vigorous and competing with A. The marked lateral offers a way to shorten B while keeping part of its foliage.'},
+  {id:'C',title:'Low temporary branch',base:[278,440],tip:[115,370],fork:[190,403],lat:[165,362],info:'C is low and small relative to the trunk. It is away from the future walkway and causes no current obstruction. Consider its temporary contribution before deciding when to remove it.'},
+  {id:'D',title:'Future clearance branch',base:[278,392],tip:[471,335],fork:[373,364],lat:[395,322],info:'D reaches toward the future walkway. It is more vigorous than C. The path is not open yet; manage its growth while developing eventual clearance.'},
+  {id:'E',title:'Possible scaffold branch',base:[280,341],tip:[104,222],fork:[191,281],lat:[151,291],info:'E has useful spacing from other main attachments and extends away from the path. It is a potential permanent scaffold.'}
 ];
-let state={decisions:{},first:null,committed:null,year:0,visited:[],fields:{}},selected='A';
-try{let s=JSON.parse(localStorage.getItem(KEY));if(s?.decisions)state={...state,...s}}catch{}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}}
-for(const id of ['name','objective','prediction','reflection','calendar']){$(id).value=state.fields[id]||'';$(id).oninput=()=>{state.fields[id]=$(id).value;persist()}}
-function feedback(b,a,y){
-const time=y===1?'At the first revisit':y===2?'By the second revisit':'By the third revisit';
-const msg={
-A:{retain:'You preserved the best visible leader candidate. Its dominance still depends on how competing uprights are managed.',reduce:'Shortening the intact leader may allow a competitor to take over. Reconsider the objective before reducing it.',remove:'You removed the best visible trunk continuation. A remaining upright may become the leader, but you now need a deliberate replacement plan.'},
-B:{retain:'Competition remains. With continued growth, later correction may require a larger wound.',reduce:'You subordinated the competing stem while keeping some foliage. Reassess its growth relative to the selected leader; it may need another reduction.',remove:'You eliminated this competitor, but removed its entire foliage contribution. Compare that wound and foliage loss with a staged reduction.'},
-C:{retain:'You kept a useful temporary branch with no immediate clearance conflict. Keep it subordinate and reassess its size as the tree develops.',reduce:'You limited a small temporary branch. That can retain some contribution, but your explanation should identify why shortening was needed now.',remove:'You created clearance where none was currently needed. You also lost this temporary branch’s contribution; consider whether waiting served the tree better.'},
-D:{retain:'The future clearance issue remains. Do not assume its attachment will rise up the trunk as the tree grows taller.',reduce:'You limited extension toward the path while keeping a portion of this temporary branch. Reassess before the walkway opens.',remove:'You achieved clearance at this attachment now. Weigh that benefit against removing the entire branch before the path is in use.'},
-E:{retain:'You preserved a useful scaffold candidate. Confirm spacing in three dimensions and monitor its size relative to the trunk.',reduce:'You shortened a useful scaffold candidate without a stated site conflict. Your reasoning needs a specific benefit.',remove:'You removed a possible permanent scaffold and created a gap. The stated site conditions did not require its removal.'}
-};
-return time+': '+msg[b.id][a]+(y===3?' This illustration cannot tell you wound closure or future structural safety.':'')
+
+let state = {decisions:{}, committed:null, first:null, stage:'after', responseViewed:false, fields:{}};
+let selected = 'A';
+
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY));
+  if (saved?.decisions) state = {...state, ...saved};
+} catch {}
+
+function persist(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
 }
-function choose(id){selected=id;let b=B.find(b=>b.id===id);$('branchTitle').textContent=id+' · '+b.title;$('detail').textContent=b.info;$('action').value=state.decisions[id]?.action||'';$('why').value=state.decisions[id]?.why||'';document.querySelectorAll('[data-branch]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.branch===id));}
+
+for (const id of ['name','objective','prediction','reflection','calendar']) {
+  $(id).value = state.fields[id] || '';
+  $(id).oninput = () => {
+    state.fields[id] = $(id).value;
+    persist();
+  };
+}
+
+function choose(id){
+  selected = id;
+  const b = B.find(x => x.id === id);
+  $('branchTitle').textContent = id + ' · ' + b.title;
+  $('detail').textContent = b.info;
+  $('action').value = state.decisions[id]?.action || '';
+  $('why').value = state.decisions[id]?.why || '';
+  document.querySelectorAll('[data-branch]').forEach(btn => btn.setAttribute('aria-pressed', btn.dataset.branch === id));
+}
+
+function pointAlong(a,b,t){
+  return [a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t];
+}
+
+function extendPoint(a,b,amount){
+  const dx = b[0]-a[0], dy = b[1]-a[1];
+  const len = Math.hypot(dx,dy) || 1;
+  return [b[0] + dx/len*amount, b[1] + dy/len*amount];
+}
+
+function shoot(x,y,dx,dy,w=2.5){
+  return '<path d="M'+x+' '+y+' l'+dx+' '+dy+'" stroke="#87765f" stroke-width="'+w+'" fill="none" stroke-linecap="round"/>';
+}
+
+function labelSVG(b, active){
+  const fill = active ? '#002855' : 'white';
+  const text = active ? 'white' : '#002855';
+  return '<circle cx="'+b.tip[0]+'" cy="'+(b.tip[1]-20)+'" r="16" fill="'+fill+'" stroke="#002855"/><text x="'+b.tip[0]+'" y="'+(b.tip[1]-14)+'" text-anchor="middle" fill="'+text+'" font-size="17">'+b.id+'</text>';
+}
+
+function drawPrunedBranch(b, action, active){
+  const color = active ? '#966c08' : '#75634d';
+  const headingPt = pointAlong(b.base,b.tip,0.68);
+  let s = '<g class="branch" data-svg="'+b.id+'" role="button" tabindex="0" aria-label="Inspect branch '+b.id+' '+b.title+'">';
+
+  if (action === 'remove') {
+    s += '<path d="M'+b.base+' L'+b.tip+'" stroke="'+color+'" stroke-width="3" opacity=".28" stroke-dasharray="6 6" fill="none" stroke-linecap="round"/>';
+    s += '<circle cx="'+b.base[0]+'" cy="'+b.base[1]+'" r="4" fill="#b6453d"/>';
+  } else if (action === 'reduce') {
+    s += '<path d="M'+b.base+' L'+b.fork+'" stroke="'+color+'" stroke-width="8" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+b.fork+' L'+b.lat+'" stroke="'+color+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+b.fork+' L'+b.tip+'" stroke="'+color+'" stroke-width="3" opacity=".24" stroke-dasharray="6 6" fill="none" stroke-linecap="round"/>';
+    s += '<circle cx="'+b.fork[0]+'" cy="'+b.fork[1]+'" r="5" fill="#237ca0"/>';
+  } else if (action === 'heading') {
+    s += '<path d="M'+b.base+' L'+headingPt+'" stroke="'+color+'" stroke-width="8" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+headingPt+' L'+b.tip+'" stroke="'+color+'" stroke-width="3" opacity=".24" stroke-dasharray="6 6" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+(headingPt[0]-5)+' '+(headingPt[1]-5)+' L'+(headingPt[0]+5)+' '+(headingPt[1]+5)+' M'+(headingPt[0]-5)+' '+(headingPt[1]+5)+' L'+(headingPt[0]+5)+' '+(headingPt[1]-5)+'" stroke="#b6453d" stroke-width="2"/>';
+  } else {
+    s += '<path d="M'+b.base+' L'+b.tip+'" stroke="'+color+'" stroke-width="8" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+b.fork+' L'+b.lat+'" stroke="'+color+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+    s += '<circle cx="'+b.fork[0]+'" cy="'+b.fork[1]+'" r="5" fill="#237ca0"/>';
+  }
+
+  s += labelSVG(b, active);
+  s += '</g>';
+  return s;
+}
+
+function drawResponseBranch(b, action, active){
+  const color = active ? '#966c08' : '#75634d';
+  const headingPt = pointAlong(b.base,b.tip,0.68);
+  let s = '<g class="branch" data-svg="'+b.id+'" role="button" tabindex="0" aria-label="Inspect branch '+b.id+' '+b.title+'">';
+
+  if (action === 'remove') {
+    s += '<circle cx="'+b.base[0]+'" cy="'+b.base[1]+'" r="5" fill="#8d6b4b"/>';
+    s += '<path d="M'+(b.base[0]-5)+' '+b.base[1]+' Q'+b.base[0]+' '+(b.base[1]-6)+' '+(b.base[0]+5)+' '+b.base[1]+'" stroke="#8d6b4b" stroke-width="2" fill="none"/>';
+  } else if (action === 'reduce') {
+    const latTip = extendPoint(b.fork, b.lat, b.id === 'B' ? 34 : 24);
+    s += '<path d="M'+b.base+' L'+b.fork+'" stroke="'+color+'" stroke-width="9" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+b.fork+' L'+latTip+'" stroke="'+color+'" stroke-width="6" fill="none" stroke-linecap="round"/>';
+    s += '<circle cx="'+b.fork[0]+'" cy="'+b.fork[1]+'" r="5" fill="#237ca0"/>';
+    const sp1 = pointAlong(b.fork, latTip, 0.58);
+    const sp2 = pointAlong(b.fork, latTip, 0.82);
+    const dir = latTip[0] < b.fork[0] ? -1 : 1;
+    s += shoot(sp1[0], sp1[1], 14*dir, -16, 2.3);
+    s += shoot(sp2[0], sp2[1], 12*dir, -12, 2.2);
+  } else if (action === 'heading') {
+    s += '<path d="M'+b.base+' L'+headingPt+'" stroke="'+color+'" stroke-width="8.5" fill="none" stroke-linecap="round"/>';
+    const dir = b.tip[0] < b.base[0] ? -1 : 1;
+    s += shoot(headingPt[0], headingPt[1], -10*dir, -26, 3);
+    s += shoot(headingPt[0], headingPt[1], 0, -30, 3.2);
+    s += shoot(headingPt[0], headingPt[1], 12*dir, -24, 2.8);
+    const sub = pointAlong(b.base, headingPt, 0.88);
+    s += shoot(sub[0], sub[1], 10*dir, -14, 2.2);
+  } else {
+    const grownTip = extendPoint(b.base, b.tip, b.id === 'A' ? 42 : 24);
+    const grownLat = extendPoint(b.fork, b.lat, b.id === 'A' ? 14 : 10);
+    s += '<path d="M'+b.base+' L'+grownTip+'" stroke="'+color+'" stroke-width="9" fill="none" stroke-linecap="round"/>';
+    s += '<path d="M'+b.fork+' L'+grownLat+'" stroke="'+color+'" stroke-width="4.5" fill="none" stroke-linecap="round"/>';
+    s += '<circle cx="'+b.fork[0]+'" cy="'+b.fork[1]+'" r="5" fill="#237ca0"/>';
+    const sp1 = pointAlong(b.base, grownTip, b.id === 'A' ? 0.55 : 0.62);
+    const sp2 = pointAlong(b.base, grownTip, b.id === 'A' ? 0.78 : 0.82);
+    const dir = grownTip[0] < b.base[0] ? -1 : 1;
+    s += shoot(sp1[0], sp1[1], -10*dir, -14, 2.2);
+    s += shoot(sp2[0], sp2[1], 12*dir, -15, 2.1);
+    if (b.id === 'A') {
+      s += shoot(grownTip[0], grownTip[1], -18, -18, 2.5);
+      s += shoot(grownTip[0], grownTip[1], 18, -16, 2.3);
+    }
+  }
+
+  s += labelSVG(b, active);
+  s += '</g>';
+  return s;
+}
+
+function responseText(b, action){
+  const msgs = {
+    retain: b.id === 'A'
+      ? 'One season later, the central leader has extended upward and developed small additional branching. If competing stems are controlled, this supports a dominant leader objective.'
+      : 'One season later, this retained branch has extended, increased in diameter, and added some small lateral growth.' ,
+    reduce: 'One season later, the retained lateral has extended and assumed growth. The response occurs from the remaining lateral, not from the removed portion beyond the reduction cut.',
+    heading: 'One season later, vigorous shoots have developed below the heading cut. This can create multiple new shoots and renewed competition near the cut point.',
+    remove: 'One season later, the branch remains gone. In this teaching scenario, no new branch sprouts from that same attachment point.'
+  };
+  return msgs[action] || msgs.retain;
+}
+
+function planReviewNote(){
+  const actions = B.map(b => state.committed?.[b.id]?.action || 'retain');
+  const removed = actions.filter(a => a === 'remove').length;
+  const headed = actions.filter(a => a === 'heading').length;
+  if (removed >= 3) {
+    return 'Whole-plan review: you removed ' + removed + ' of the five modeled branches. Reconsider how much useful growth is being lost at once and whether staged work could meet the objective.';
+  }
+  if (headed >= 2) {
+    return 'Whole-plan review: multiple heading cuts can create a flush of new shoots and future pruning problems. Check whether some of those shortening cuts would be better handled with reduction cuts to laterals.';
+  }
+  return '';
+}
+
 function render(){
-$('years').innerHTML=[0,1,2,3].map(y=>'<button data-year="'+y+'" aria-pressed="'+(state.year===y)+'" '+(y&&!state.committed?'disabled':'')+'>'+(y?'Year '+y:'Plan view')+'<\/button>').join('');
-document.querySelectorAll('[data-year]').forEach(x=>x.onclick=()=>{state.year=+x.dataset.year;if(state.year&&!state.visited.includes(state.year))state.visited.push(state.year);persist();render()});
-let y=state.year,plan=y?state.committed:state.decisions;
-let out='<svg viewBox="0 0 560 590" role="img" aria-label="Young tree with five selectable branches A through E"><rect width="560" height="590" fill="#f1f6ed"/><path d="M390 590 L430 480 L525 480 L550 590" fill="#deded7"/><text x="379" y="568" font-size="15">Future walkway<\/text><path d="M40 528 Q280 510 535 528" stroke="#a0b493" fill="none"/><path d="M268 520 Q279 445 280 302" stroke="#75634d" stroke-width="'+(19+y*2)+'" fill="none" stroke-linecap="round"/>';
-for(let b of B){let a=plan?.[b.id]?.action||'retain',end=a==='reduce'?b.fork:b.tip;
-let grow=y*(a==='reduce'?5:12);let tip=[end[0]+(end[0]-b.base[0])*y*.05,end[1]-grow];
-if(a==='remove')tip=b.tip;
-let color=selected===b.id?'#966c08':'#75634d';
-out+='<g class="branch" data-svg="'+b.id+'" role="button" tabindex="0" aria-label="Inspect branch '+b.id+' '+b.title+'"><path d="M'+b.base+' L'+tip+'" stroke="'+color+'" stroke-width="'+(a==='remove'?3:8+y)+'" opacity="'+(a==='remove'?.25:1)+'" '+(a==='remove'?'stroke-dasharray="6 6"':'')+' fill="none" stroke-linecap="round"/>';
-if(a!=='remove'){out+='<path d="M'+b.fork+' L'+b.lat+'" stroke="#75634d" stroke-width="4"/>';
-for(let n=1;n<4;n++){let t=n/4,px=b.base[0]+(tip[0]-b.base[0])*t,py=b.base[1]+(tip[1]-b.base[1])*t;out+='<path d="M'+px+' '+py+' l'+(n%2?'-25 -23':'24 -26')+'" stroke="#87765f" stroke-width="2.5" fill="none"/>'}
-out+='<circle cx="'+b.fork[0]+'" cy="'+b.fork[1]+'" r="5" fill="#237ca0"/>'}
-out+='<circle cx="'+b.tip[0]+'" cy="'+(b.tip[1]-20)+'" r="16" fill="'+(selected===b.id?'#002855':'white')+'" stroke="#002855"/><text x="'+b.tip[0]+'" y="'+(b.tip[1]-14)+'" text-anchor="middle" fill="'+(selected===b.id?'white':'#002855')+'" font-size="17">'+b.id+'<\/text><\/g>';
-}out+='<\/svg>';$('tree').innerHTML=out;
-document.querySelectorAll('[data-svg]').forEach(el=>{el.onclick=()=>{choose(el.dataset.svg);render()};el.onkeydown=e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();el.click()}}});
-$('caption').textContent=y?'Illustrative year '+y+' after your committed plan, with no further pruning. Retained branches extend; reduced branches remain shorter but can regrow.':'Plan preview: changes appear as you save each decision.';
-$('summary').textContent=B.map(b=>b.id+': '+(state.decisions[b.id]?.action||'not decided')).join(' • ');
-$('feedback').replaceChildren();
-if(state.committed){let heading=document.createElement('h3');heading.textContent=y?'Year '+y+' response':'Your committed plan';$('feedback').append(heading);
-for(let b of B){let p=document.createElement('p');p.textContent=b.id+' · '+feedback(b,state.committed[b.id].action,y||1);$('feedback').append(p)}
-let removed=B.filter(b=>state.committed[b.id].action==='remove').length;if(removed>=3){let p=document.createElement('p');p.className='note';p.textContent='Whole-plan review: you removed '+removed+' of the five modeled branches. Reconsider how much useful growth is being lost at once and whether staged work could meet the objective.';$('feedback').append(p)}
+  const committed = !!state.committed;
+  $('stageButtons').innerHTML = [
+    '<button data-stage="after" aria-pressed="'+(state.stage==='after')+'">Immediately after pruning</button>',
+    '<button data-stage="response" aria-pressed="'+(state.stage==='response')+'" '+(committed ? '' : 'disabled')+'>One growing season later</button>'
+  ].join('');
+
+  document.querySelectorAll('[data-stage]').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.disabled) return;
+      state.stage = btn.dataset.stage;
+      if (state.stage === 'response') state.responseViewed = true;
+      persist();
+      render();
+    };
+  });
+
+  let out = '<svg viewBox="0 0 560 590" role="img" aria-label="Young tree with five selectable branches A through E"><rect width="560" height="590" fill="#f1f6ed"/><path d="M390 590 L430 480 L525 480 L550 590" fill="#deded7"/><text x="379" y="568" font-size="15">Future walkway</text><path d="M40 528 Q280 510 535 528" stroke="#a0b493" fill="none"/><path d="M268 520 Q279 445 280 302" stroke="#75634d" stroke-width="'+(state.stage==='response' ? 21 : 19)+'" fill="none" stroke-linecap="round"/>';
+
+  for (const b of B) {
+    const action = (state.stage === 'response' ? (state.committed?.[b.id]?.action || 'retain') : (state.decisions[b.id]?.action || 'retain'));
+    out += state.stage === 'response'
+      ? drawResponseBranch(b, action, selected === b.id)
+      : drawPrunedBranch(b, action, selected === b.id);
+  }
+
+  out += '</svg>';
+  $('tree').innerHTML = out;
+
+  document.querySelectorAll('[data-svg]').forEach(el => {
+    el.onclick = () => { choose(el.dataset.svg); render(); };
+    el.onkeydown = e => {
+      if (['Enter',' '].includes(e.key)) {
+        e.preventDefault();
+        el.click();
+      }
+    };
+  });
+
+  $('caption').textContent = state.stage === 'after'
+    ? 'Immediately after pruning: saved decisions update the tree. Removal cuts stay removed, reduction cuts shorten back to a lateral, and heading cuts shorten without leaving a retained lateral.'
+    : 'One growing season later: retained branches extend, reduction cuts redirect growth into the retained lateral, heading cuts produce new shoots below the cut, and removed branches stay gone in this scenario.';
+
+  $('summary').innerHTML = B.map(b => {
+    const action = state.decisions[b.id]?.action || 'not decided';
+    return '<p><strong>'+b.id+'</strong> · '+b.title+': '+action+'</p>';
+  }).join('');
+
+  $('feedback').replaceChildren();
+  if (state.committed) {
+    const heading = document.createElement('h3');
+    heading.textContent = state.stage === 'response' ? 'One-year response' : 'Committed pruning plan';
+    $('feedback').append(heading);
+
+    for (const b of B) {
+      const p = document.createElement('p');
+      const action = state.committed[b.id]?.action || 'retain';
+      p.textContent = b.id + ' · ' + responseText(b, action);
+      $('feedback').append(p);
+    }
+
+    const note = planReviewNote();
+    if (note) {
+      const p = document.createElement('p');
+      p.className = 'note';
+      p.textContent = note;
+      $('feedback').append(p);
+    }
+  }
 }
-}
-$('branches').innerHTML=B.map(b=>'<button data-branch="'+b.id+'">'+b.id+' · '+b.title+'<\/button>').join('');
-document.querySelectorAll('[data-branch]').forEach(x=>x.onclick=()=>{choose(x.dataset.branch);render()});
-$('save').onclick=()=>{if(!$('action').value||!$('why').value.trim()){$('status').textContent='Choose an action and explain your reasoning first.';return}state.decisions[selected]={action:$('action').value,why:$('why').value.trim()};state.year=0;persist();render();$('status').textContent='Branch '+selected+' saved. Commit the plan to refresh future views.'};
-function syncFields(){for(const id of ['name','objective','prediction','reflection','calendar'])state.fields[id]=$(id).value;}
-$('reveal').onclick=()=>{
- syncFields();
- if($('action').value && $('why').value.trim())state.decisions[selected]={action:$('action').value,why:$('why').value.trim()};
- let missing=[];
- if(!state.fields.objective.trim())missing.push('the objective at the top');
- if(!state.fields.prediction.trim())missing.push('your prediction');
- for(const b of B)if(!state.decisions[b.id]?.action||!state.decisions[b.id]?.why?.trim())missing.push('a decision and explanation for branch '+b.id);
- persist();render();
- if(missing.length){$('commitStatus').textContent='Still needed: '+missing.join('; ')+'. Your completed work is saved.';$('commitStatus').focus();return;}
- state.committed=JSON.parse(JSON.stringify(state.decisions));
- if(!state.first)state.first={objective:state.fields.objective,prediction:state.fields.prediction,decisions:JSON.parse(JSON.stringify(state.decisions))};
- state.year=1;state.visited=[1];persist();render();
- $('commitStatus').textContent='Plan committed. Year 1 is open. Use Year 2 and Year 3 above the tree to continue.';
- $('years').scrollIntoView({behavior:'smooth',block:'start'});$('years').querySelector('[data-year="1"]').focus();
+
+$('branches').innerHTML = B.map(b => '<button data-branch="'+b.id+'">'+b.id+' · '+b.title+'</button>').join('');
+document.querySelectorAll('[data-branch]').forEach(btn => {
+  btn.onclick = () => {
+    choose(btn.dataset.branch);
+    render();
+  };
+});
+
+$('save').onclick = () => {
+  if (!$('action').value || !$('why').value.trim()) {
+    $('status').textContent = 'Choose an action and explain your reasoning first.';
+    return;
+  }
+  state.decisions[selected] = {action:$('action').value, why:$('why').value.trim()};
+  state.stage = 'after';
+  persist();
+  render();
+  $('status').textContent = 'Branch ' + selected + ' saved.';
 };
-function report(){return 'AGEH-08 | Young tree pruning case\nName: '+(state.fields.name||'Not entered')+'\n\n'+Object.entries(state.fields).filter(([k])=>k!=='name').map(([k,v])=>k.toUpperCase()+'\n'+v).join('\n\n')+'\n\nFIRST COMMITTED PLAN\n'+JSONtoText(state.first?.decisions)+'\n\nCURRENT SAVED PLAN\n'+JSONtoText(state.decisions)+'\n\nLATEST COMMITTED PLAN\n'+JSONtoText(state.committed)+'\n\nYears explored for latest plan: '+state.visited.join(', ')+'\n\nTeaching scenarios, not predictions. Written reasoning is for instructor review.'}
-function JSONtoText(d){return d?B.map(b=>b.id+' '+b.title+': '+(d[b.id]?.action||'Not decided')+'\nReason: '+(d[b.id]?.why||'')).join('\n\n'):'Not committed'}
-function ready(){syncFields();persist();let dirty=JSON.stringify(state.decisions)!==JSON.stringify(state.committed);if(!state.fields.name?.trim()||!state.fields.reflection?.trim()||!state.fields.calendar?.trim()||state.visited.length<3||dirty){$('exportStatus').textContent='Before submitting: enter your name, explore all three years of your latest committed plan, and complete the reflection and calendar entry. Commit any changed decisions again.';return false}return true}
-$('download').onclick=()=>{if(!ready())return;let u=URL.createObjectURL(new Blob([report()],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download='Young_Tree_Pruning_Record.txt';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000);$('exportStatus').textContent='Downloaded. Open the text file to review it, then upload to Canvas.'};
-$('print').onclick=()=>{if(!ready())return;$('report').textContent=report();window.print()};
-$('reset').onclick=()=>{if(confirm('Clear all responses and start again? Download your work first.')){localStorage.removeItem(KEY);location.reload()}};
-choose('A');render();
-</script></html>
+
+function syncFields(){
+  for (const id of ['name','objective','prediction','reflection','calendar']) {
+    state.fields[id] = $(id).value;
+  }
+}
+
+$('reveal').onclick = () => {
+  syncFields();
+  if ($('action').value && $('why').value.trim()) {
+    state.decisions[selected] = {action:$('action').value, why:$('why').value.trim()};
+  }
+
+  const missing = [];
+  if (!state.fields.objective?.trim()) missing.push('the objective at the top');
+  if (!state.fields.prediction?.trim()) missing.push('your one-season prediction');
+  for (const b of B) {
+    if (!state.decisions[b.id]?.action || !state.decisions[b.id]?.why?.trim()) {
+      missing.push('a decision and explanation for branch ' + b.id);
+    }
+  }
+
+  persist();
+  render();
+
+  if (missing.length) {
+    $('commitStatus').textContent = 'Still needed: ' + missing.join('; ') + '. Your completed work is saved.';
+    $('commitStatus').focus();
+    return;
+  }
+
+  state.committed = JSON.parse(JSON.stringify(state.decisions));
+  if (!state.first) {
+    state.first = {
+      objective: state.fields.objective,
+      prediction: state.fields.prediction,
+      decisions: JSON.parse(JSON.stringify(state.decisions))
+    };
+  }
+  state.stage = 'response';
+  state.responseViewed = true;
+  persist();
+  render();
+  $('commitStatus').textContent = 'Plan committed. The one-year response is now open. Toggle between “Immediately after pruning” and “One growing season later” above the tree to compare views.';
+  $('stageButtons').scrollIntoView({behavior:'smooth', block:'start'});
+  const responseBtn = document.querySelector('[data-stage="response"]');
+  if (responseBtn) responseBtn.focus();
+};
+
+function jsonToText(d){
+  return d ? B.map(b => b.id + ' ' + b.title + ': ' + (d[b.id]?.action || 'Not decided') + '\nReason: ' + (d[b.id]?.why || '')).join('\n\n') : 'Not committed';
+}
+
+function report(){
+  return 'AGEH-08 | Young tree pruning case\n' +
+    'Name: ' + (state.fields.name || 'Not entered') + '\n\n' +
+    Object.entries(state.fields)
+      .filter(([k]) => k !== 'name')
+      .map(([k,v]) => k.toUpperCase() + '\n' + v)
+      .join('\n\n') + '\n\n' +
+    'FIRST COMMITTED PLAN\n' + jsonToText(state.first?.decisions) + '\n\n' +
+    'CURRENT SAVED PLAN\n' + jsonToText(state.decisions) + '\n\n' +
+    'LATEST COMMITTED PLAN\n' + jsonToText(state.committed) + '\n\n' +
+    'Response viewed: ' + (state.responseViewed ? 'Yes' : 'No') + '\n\n' +
+    'Teaching scenarios, not predictions. Written reasoning is for instructor review.';
+}
+
+function ready(){
+  syncFields();
+  persist();
+  const dirty = JSON.stringify(state.decisions) !== JSON.stringify(state.committed);
+  if (!state.fields.name?.trim() || !state.fields.reflection?.trim() || !state.fields.calendar?.trim() || !state.responseViewed || !state.committed || dirty) {
+    $('exportStatus').textContent = 'Before submitting: enter your name, commit your latest plan, view the one-year response, and complete the reflection and next-visit plan. If you changed a decision, commit the plan again.';
+    return false;
+  }
+  return true;
+}
+
+$('download').onclick = () => {
+  if (!ready()) return;
+  const u = URL.createObjectURL(new Blob([report()], {type:'text/plain;charset=utf-8'}));
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = 'Young_Tree_Pruning_Record.txt';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(u), 10000);
+  $('exportStatus').textContent = 'Downloaded. Open the text file to review it, then upload to Canvas.';
+};
+
+$('print').onclick = () => {
+  if (!ready()) return;
+  $('report').textContent = report();
+  window.print();
+};
+
+$('reset').onclick = () => {
+  if (confirm('Clear all responses and start again? Download your work first.')) {
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+};
+
+choose('A');
+render();
+</script>
+</body>
+</html>
