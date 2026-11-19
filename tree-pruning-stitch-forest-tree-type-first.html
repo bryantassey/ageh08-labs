@@ -1,0 +1,2321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prune, Predict, Revisit • AGEH-08 Merced College</title>
+  <!-- Google Fonts: Newsreader / Inter / JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --mc-navy: #002855;
+      --mc-navy-dark: #001a3a;
+      --mc-gold: #c99700;
+      --mc-gold-light: #e5b324;
+      --forest-green: #183D32;
+      --forest-green-dark: #0f2720;
+      --sage-subtle: #e8efe8;
+      --sage-light: #dce8dc;
+      --sage-mid: #9eb8a1;
+      --paper-cream: #fbfbf8;
+      --paper-warm: #f4f5ee;
+      --bark-brown: #6f5946;
+      --bark-dark: #4a3b2c;
+      --growth-green: #2c9858;
+      --growth-green-light: #379c60;
+      --color-remove: #c62828;
+      --color-reduce: #1769c2;
+      --color-head: #ed7b13;
+      --color-retain: #227b39;
+      --surface-border: #d7e0d6;
+      --text-main: #1b2e25;
+      --text-muted: #536b5d;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-sm: 0 1px 3px rgba(24, 61, 50, 0.05), 0 1px 2px rgba(24, 61, 50, 0.04);
+      --shadow-md: 0 4px 14px rgba(24, 61, 50, 0.07), 0 2px 6px rgba(24, 61, 50, 0.04);
+      --shadow-lg: 0 12px 28px rgba(0, 40, 85, 0.1), 0 4px 10px rgba(0, 40, 85, 0.05);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--paper-warm);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      background-image: 
+        radial-gradient(#dce8dc 0.75px, transparent 0.75px), 
+        linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(244,245,238,0.9));
+      background-size: 20px 20px, 100% 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Botanical Top Banner */
+    header.site-header {
+      background: linear-gradient(135deg, var(--mc-navy-dark) 0%, var(--mc-navy) 60%, #003775 100%);
+      color: #ffffff;
+      border-bottom: 4px solid var(--mc-gold);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,26,58,0.25);
+    }
+
+    .header-inner {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .college-crest {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #10386e, var(--mc-navy));
+      border: 1.5px solid var(--mc-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.2), 0 2px 6px rgba(0,0,0,0.25);
+      color: var(--mc-gold);
+    }
+
+    .brand-titles h1 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-titles .subtitle {
+      margin: 0;
+      font-size: 12px;
+      color: #b7ceeb;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .subtitle .badge {
+      background: rgba(201, 151, 0, 0.2);
+      color: #ffdf7a;
+      border: 1px solid rgba(201, 151, 0, 0.4);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10.5px;
+    }
+
+    .header-quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-header {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-header:hover {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .btn-header.gold {
+      background: linear-gradient(180deg, #d8a816, var(--mc-gold));
+      color: #0b1a0e;
+      border: 1px solid #ffde7a;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .btn-header.gold:hover {
+      filter: brightness(1.08);
+    }
+
+    /* Workflow Stage Progress Bar */
+    .workflow-strip {
+      background: #ffffff;
+      border-bottom: 1px solid var(--surface-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .workflow-inner {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      overflow-x: auto;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .step-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .step-btn .step-number {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--sage-light);
+      color: var(--forest-green);
+      font-size: 11.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .step-btn:hover {
+      background: var(--paper-warm);
+      color: var(--forest-green);
+    }
+
+    .step-btn.active {
+      background: var(--forest-green);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(24, 61, 50, 0.25);
+    }
+
+    .step-btn.active .step-number {
+      background: var(--mc-gold);
+      color: #000;
+    }
+
+    .step-divider {
+      color: var(--surface-border);
+      display: flex;
+      align-items: center;
+    }
+
+    .stage-guidance-pill {
+      font-size: 12.5px;
+      color: var(--forest-green);
+      background: var(--sage-subtle);
+      border: 1px solid var(--sage-light);
+      padding: 6px 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .stage-guidance-pill svg {
+      width: 15px;
+      height: 15px;
+      color: var(--forest-green);
+    }
+
+    /* Main Application Layout */
+    main.app-shell {
+      max-width: 1560px;
+      width: 100%;
+      margin: 18px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(360px, 420px);
+      gap: 20px;
+      flex: 1;
+    }
+
+    /* Left: Specimen Plate Canvas */
+    .specimen-panel {
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      align-self: start;
+    }
+
+    /* Specimen Plate Header / Context Bar */
+    .plate-toolbar {
+      padding: 14px 18px;
+      border-bottom: 1px solid #edf2ed;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #fafbf9;
+    }
+
+    .tool-group-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .active-toolset {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Interactive Action Buttons */
+    .action-btn {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #cbd7cd;
+      background: #ffffff;
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn:hover:not(:disabled) {
+      background: #f4f7f4;
+      border-color: #a4baa7;
+      transform: translateY(-1px);
+    }
+
+    .action-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .action-btn.selected {
+      background: #eef6ee;
+      border-color: var(--forest-green);
+      color: var(--forest-green);
+      font-weight: 700;
+      box-shadow: 0 0 0 1.5px var(--forest-green);
+    }
+
+    .action-btn .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Botanical Plate Canvas Body */
+    .plate-body {
+      position: relative;
+      flex: 0 0 auto;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      background: linear-gradient(180deg,#f3f8f2 0%,#e8f1e6 74%,#e3eddf 100%);
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    /* Natural botanical field paper subtle frame */
+    .specimen-paper {
+      width: 100%;
+      height: auto;
+      background: linear-gradient(180deg,#f8fbf8 0%,#eaf2e8 73%,#e2ecdf 100%);
+      border-radius: var(--radius-lg);
+      border: 1px solid #d8e4d6;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.015);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .specimen-paper.mark-mode {
+      cursor: crosshair;
+    }
+
+    .specimen-paper.cut-mode {
+      cursor: default;
+    }
+
+    /* SVG tree canvas */
+    #drawing {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Specimen Plate Footer Details */
+    .plate-status-bar {
+      padding: 10px 18px;
+      background: #fafbf9;
+      border-top: 1px solid #e9eee9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--forest-green);
+    }
+
+    .status-indicator .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mc-gold);
+      box-shadow: 0 0 0 3px rgba(201, 151, 0, 0.2);
+    }
+
+    .legend-chips {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chip-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .chip-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    /* Right: Field Notebook & Controls Panel */
+    .notebook-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f0f4f0;
+      padding-bottom: 8px;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--forest-green);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--mc-gold);
+    }
+
+    .badge-soft {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--sage-light);
+      color: var(--forest-green-dark);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Instructional Context Notice */
+    .instruction-callout {
+      background: #f7faf7;
+      border-left: 4px solid var(--forest-green);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 12px 14px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #2c4439;
+      margin-bottom: 14px;
+    }
+
+    .instruction-callout strong {
+      color: var(--forest-green);
+    }
+
+    .instruction-callout.warning {
+      background: #fff9ea;
+      border-left-color: var(--mc-gold);
+      color: #634b07;
+    }
+
+    /* Leader selection pill message */
+    .leader-alert-banner {
+      background: #edf8ef;
+      border: 1px solid #badaba;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: none;
+      font-size: 13px;
+      color: #1a5628;
+    }
+
+    .leader-alert-banner.show {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    /* Growth Mode Controls */
+    .growth-box {
+      background: #f2f7f2;
+      border: 1px solid #c7dcc7;
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 700;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--forest-green);
+      margin-bottom: 6px;
+    }
+
+    select.custom-select {
+      width: 100%;
+      padding: 9px 12px;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #ffffff;
+      border: 1.5px solid #a2bba6;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    select.custom-select:focus {
+      border-color: var(--forest-green);
+      box-shadow: 0 0 0 3px rgba(24, 61, 50, 0.12);
+    }
+
+    .growth-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .stat-tile {
+      background: #ffffff;
+      border: 1px solid #dce8dc;
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .stat-tile .num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--forest-green);
+      display: block;
+      line-height: 1.1;
+    }
+
+    .stat-tile .lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Action Log Timeline */
+    .action-history-wrap {
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid #e7eee7;
+      border-radius: var(--radius-md);
+      background: #fafbf9;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+    }
+
+    .action-history-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+
+    .action-history-list li {
+      padding: 4px 0;
+      border-bottom: 1px dashed #e3eae3;
+    }
+
+    .action-history-list li:last-child {
+      border-bottom: none;
+    }
+
+    .empty-log {
+      color: #8c9e93;
+      font-style: italic;
+      list-style-type: none;
+      margin-left: -20px;
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    /* Action log buttons */
+    .log-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Student Observation Field Notes */
+    .field-textarea {
+      width: 100%;
+      min-height: 95px;
+      padding: 10px 12px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-main);
+      background: #ffffff;
+      border: 1px solid #bad1be;
+      border-radius: var(--radius-md);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .field-textarea:focus {
+      border-color: var(--forest-green);
+      box-shadow: 0 0 0 3px rgba(24, 61, 50, 0.12);
+    }
+
+    /* Export Grid */
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .btn-export {
+      padding: 9px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      background: #ffffff;
+      border: 1px solid #bad1be;
+      border-radius: var(--radius-md);
+      color: var(--forest-green-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-export:hover {
+      background: var(--forest-green);
+      color: #ffffff;
+      border-color: var(--forest-green);
+    }
+
+    .btn-export svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Quick Field Reference Accordion / Cards */
+    .field-ref-card {
+      background: #fbfbf9;
+      border: 1px solid #e5ebe5;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+
+    .field-ref-title {
+      font-weight: 700;
+      color: var(--forest-green);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-ref-title span.indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* SVG tree elements styling */
+    .wood-piece {
+      fill: none;
+      stroke: var(--bark-brown);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: stroke;
+      cursor: pointer;
+      transition: stroke 0.15s ease;
+    }
+
+    .wood-piece:hover {
+      stroke: #aa812a;
+    }
+
+    .wood-piece.selected-piece {
+      stroke: #a87816;
+    }
+
+    .branch-label {
+      font: bold 16px 'Plus Jakarta Sans', Arial, sans-serif;
+      fill: var(--mc-navy);
+      pointer-events: none;
+    }
+
+    .cut-marker {
+      pointer-events: none;
+    }
+
+    .leader-overlay {
+      pointer-events: none;
+    }
+
+    /* Footer Credits */
+    footer.app-footer {
+      max-width: 1560px;
+      margin: 10px auto 20px;
+      padding: 0 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: var(--forest-green);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1080px) {
+      main.app-shell {
+        grid-template-columns: 1fr;
+      }
+      .specimen-panel {
+        min-height: auto;
+      }
+      #drawing {
+        max-height: 580px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner, .workflow-inner {
+        padding: 10px 16px;
+      }
+      main.app-shell {
+        padding: 0 12px;
+        margin-top: 10px;
+      }
+      .brand-titles h1 {
+        font-size: 18px;
+      }
+      .stage-guidance-pill {
+        display: none;
+      }
+      .export-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Print styling */
+    @media print {
+      header.site-header, .workflow-strip, .plate-toolbar, .log-controls, .export-grid, .field-textarea, footer.app-footer {
+        display: none !important;
+      }
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+      main.app-shell {
+        display: block;
+        padding: 0;
+        margin: 0;
+      }
+      .specimen-panel, .card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  
+    .tree-species-gate{grid-column:1/-1;background:#fffdf7;border:1px solid #d4dfce;border-left:6px solid #4a795c;border-radius:14px;padding:16px 20px;margin-bottom:4px;box-shadow:0 2px 13px #183d3210}
+    .tree-gate-head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+    .tree-gate-eyebrow{font-size:11px;font-weight:800;letter-spacing:1.3px;color:#38664c}
+    .tree-species-gate h2{font-size:20px;margin:4px 0 5px;color:#173c31}
+    .tree-species-gate p{font-size:13px;margin:0;color:#53665b}
+    .tree-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+    .tree-choice{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 16px;background:#f6faf5;border:2px solid #d3dfd3;border-radius:10px;cursor:pointer;color:#173d31;text-align:left;font:inherit}
+    .tree-choice strong{font-size:17px}.tree-choice span{font-size:12px}.tree-choice .example{color:#647669;font-style:italic}
+    .tree-choice[aria-pressed="true"]{background:#e2f1df;border-color:#277d4d;box-shadow:inset 0 0 0 1px #277d4d}
+    .tree-choice:focus-visible{outline:3px solid #c99700;outline-offset:3px}
+    .tree-type-status{font-size:12px;border-radius:30px;background:#e4ebe0;padding:7px 13px;font-weight:700;color:#254c39}
+    .tree-species-gate .tree-switch-note{font-size:11.5px;color:#8b6540;margin-top:10px}
+    body.tree-unselected .specimen-panel,body.tree-unselected .notebook-panel{opacity:.45;pointer-events:none}
+    body.tree-unselected .workflow-strip{opacity:.6;pointer-events:none}
+    @media(max-width:650px){.tree-choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+  <!-- Top Merced College Brand Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-wrap">
+        <div class="college-crest" title="Merced College Horticulture & Landscape Maintenance">
+          <!-- Tree & Growth Rings Leaf Icon -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22v-9"/>
+            <path d="M9 13a5 5 0 0 1 6 0"/>
+            <path d="M7 10a7 7 0 0 1 10 0"/>
+            <path d="M5 7a9 9 0 0 1 14 0"/>
+            <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>Prune, Predict, Revisit</h1>
+          <div class="subtitle">
+            <span>AGEH-08 • Landscape Maintenance</span>
+            <span class="badge">Merced College</span>
+            <span style="color:var(--mc-gold);">Digital Field Notebook</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-quick-actions">
+        <button class="btn-header" id="quickResetTop" title="Reset specimen to original unpruned state">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset Tree
+        </button>
+        <button class="btn-header gold" id="quickExportRecordTop" title="Download completed assignment report">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Record
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive 4-Stage Pedagogical Workflow Bar -->
+  <div class="workflow-strip">
+    <div class="workflow-inner">
+      <nav class="stepper" aria-label="Pruning Process Stages">
+        <button class="step-btn active" id="step1Btn" data-step="1">
+          <span class="step-number">1</span>
+          <span>Plan & Mark</span>
+        </button>
+        <div class="step-divider">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <button class="step-btn" id="step2Btn" data-step="2">
+          <span class="step-number">2</span>
+          <span>Digital Cuts</span>
+        </button>
+        <div class="step-divider">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <button class="step-btn" id="step3Btn" data-step="3">
+          <span class="step-number">3</span>
+          <span>Predict Growth</span>
+        </button>
+        <div class="step-divider">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <button class="step-btn" id="step4Btn" data-step="4">
+          <span class="step-number">4</span>
+          <span>Reflect & Export</span>
+        </button>
+      </nav>
+
+      <div class="stage-guidance-pill" id="stagePill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+        </svg>
+        <span id="stagePillText">Step 1: Mark proposed cuts with color pens before cutting wood.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Body -->
+  <main class="app-shell">
+  <section class="tree-species-gate" id="treeSpeciesGate" aria-labelledby="treeSpeciesTitle">
+    <div class="tree-gate-head">
+      <div><div class="tree-gate-eyebrow">BEFORE STEP 1 • IDENTIFY YOUR TREE</div>
+        <h2 id="treeSpeciesTitle">Which bud arrangement does this tree have?</h2>
+        <p>Choose the tree's original branching pattern <strong>before marking or making cuts</strong>. The starting wood <em>and</em> the one-year response will follow your choice.</p>
+      </div>
+      <span id="treeTypeStatus" class="tree-type-status" role="status">Choose a tree to begin</span>
+    </div>
+    <div class="tree-choices">
+      <button id="chooseAlternate" type="button" class="tree-choice" aria-pressed="false"><strong>Alternate</strong><span>Single buds at staggered nodes</span><span class="example">Example: oak, elm, zelkova</span></button>
+      <button id="chooseOpposite" type="button" class="tree-choice" aria-pressed="false"><strong>Opposite</strong><span>Buds arranged in pairs at nodes</span><span class="example">Example: maple, ash, dogwood</span></button>
+    </div>
+    <p class="tree-switch-note">Changing the tree after you begin will start a new specimen and clear its cuts and freehand marks. Export your work first.</p>
+  </section>
+
+
+    <!-- Left Column: The Central Specimen Plate (Interactive Tree) -->
+    <section class="specimen-panel" aria-label="Interactive Tree Pruning Specimen">
+      
+      <!-- Stage-Adaptive Toolbar directly above Specimen -->
+      <div class="plate-toolbar">
+        <div>
+          <div class="tool-group-label" id="currentToolCategory">Markup Drawing Pens</div>
+          
+          <!-- Step 1 Controls: Markup pens -->
+          <div class="active-toolset" id="markTools">
+            <button class="action-btn selected" data-color="#c62828">
+              <span class="swatch" style="background:#c62828;"></span>
+              <span>Red • Removal</span>
+            </button>
+            <button class="action-btn" data-color="#1769c2">
+              <span class="swatch" style="background:#1769c2;"></span>
+              <span>Blue • Reduction</span>
+            </button>
+            <button class="action-btn" data-color="#ed7b13">
+              <span class="swatch" style="background:#ed7b13;"></span>
+              <span>Orange • Heading</span>
+            </button>
+            <button class="action-btn" data-color="#227b39">
+              <span class="swatch" style="background:#227b39;"></span>
+              <span>Green • Retain</span>
+            </button>
+          </div>
+
+          <!-- Step 2 Controls: Digital Cut Modes -->
+          <div class="active-toolset" id="cutTools" style="display:none;">
+            <button class="action-btn selected" data-tool="remove">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              <span>Removal Cut</span>
+            </button>
+            <button class="action-btn" data-tool="reduce">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="m19 19-4.35-4.35"/></svg>
+              <span>Reduction to Lateral</span>
+            </button>
+            <button class="action-btn" data-tool="head">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="12" x2="20" y2="12"/><line x1="12" y1="4" x2="12" y2="20" stroke-dasharray="2 2"/></svg>
+              <span>Heading Cut</span>
+            </button>
+            <button class="action-btn" data-tool="leader">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20"/><path d="m17 7-5-5-5 5"/></svg>
+              <span>Identify Central Leader</span>
+            </button>
+            <button class="action-btn" data-tool="retain">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Mark Retained</span>
+            </button>
+          </div>
+
+          <!-- Step 3 Controls: One-Year Growth Response Toggle -->
+          <div class="active-toolset" id="growthTools" style="display:none;">
+            <span style="font-size:13px; font-weight:600; color:var(--forest-green);">
+              One-Year Growth Visualization Active
+            </span>
+          </div>
+
+          <!-- Step 4 Controls: Reflect info -->
+          <div class="active-toolset" id="reflectTools" style="display:none;">
+            <span style="font-size:13px; font-weight:600; color:var(--mc-navy);">
+              Reviewing Structural Balance & Exporting Assignment Record
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="action-btn" id="btnUndoPlate" title="Undo the last cut or mark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            <span>Undo</span>
+          </button>
+          <button class="action-btn" id="btnClearMarkPlate" title="Clear freehand markup drawings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            <span>Clear Markup</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Specimen Board with the Authentic Vector Tree -->
+      <div class="plate-body">
+        <div class="specimen-paper mark-mode" id="paper">
+          <svg id="drawing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1050" aria-label="Interactive young shade tree with tapering trunk, eight major limbs and secondary branches">
+            <!-- Plate botanical background & title inscription -->
+            <defs>
+              <linearGradient id="forestPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fbf8"/><stop offset=".55" stop-color="#f0f6ee"/><stop offset="1" stop-color="#e6eee2"/></linearGradient>
+              <linearGradient id="treeHaze" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c9dbcd" stop-opacity=".12"/><stop offset="1" stop-color="#8eae96" stop-opacity=".21"/></linearGradient>
+              <pattern id="forestGrain" width="42" height="44" patternUnits="userSpaceOnUse"><path d="M5 13l3 -2 M28 37l2 -3 M39 8l-2 -3" stroke="#809d83" stroke-opacity=".13" stroke-width=".8" fill="none"/></pattern>
+            </defs>
+            <rect x="0" y="-195" width="900" height="1245" fill="url(#forestPaper)"/>
+            <rect x="0" y="-195" width="900" height="1245" fill="url(#forestGrain)" pointer-events="none"/>
+            <!-- Atmospheric silhouette forest framing: decorative only, behind all clickable tree branches -->
+            <g id="forestAtmosphere" pointer-events="none" aria-hidden="true">
+              <path d="M0 765 Q40 724 80 750 Q134 692 184 754 Q223 731 261 778 L261 1050 L0 1050Z" fill="#aec4ab" opacity=".10"/>
+              <path d="M900 748 Q848 707 800 749 Q762 698 721 740 Q693 730 668 786 L668 1050 L900 1050Z" fill="#a1bca5" opacity=".12"/>
+              <path d="M0 1010 Q115 964 221 1004 Q375 981 455 1018 Q607 966 760 1008 Q837 991 900 1005 L900 1050 L0 1050Z" fill="#8dad8c" opacity=".12"/>
+              <g fill="none" stroke="#94ae9a" stroke-linecap="round" opacity=".17">
+                <path d="M38 732 Q46 440 41 226 M41 568 Q13 515 -2 489 M42 467 Q73 417 93 389 M41 341 Q19 303 6 284" stroke-width="8"/>
+                <path d="M869 757 Q859 483 864 205 M860 541 Q891 500 914 460 M863 382 Q835 349 815 326" stroke-width="9"/>
+                <path d="M100 792 Q118 607 110 493 M110 671 Q80 637 71 620 M108 590 Q140 554 150 538" stroke-width="5"/>
+                <path d="M790 786 Q773 609 784 498 M782 655 Q809 627 828 610 M782 574 Q758 551 748 527" stroke-width="5"/>
+              </g>
+              <g fill="#8dae91" opacity=".11">
+                <ellipse cx="18" cy="273" rx="57" ry="108"/><ellipse cx="87" cy="379" rx="45" ry="85"/>
+                <ellipse cx="895" cy="275" rx="57" ry="116"/><ellipse cx="821" cy="354" rx="45" ry="83"/>
+              </g>
+              <path d="M0 936 Q150 917 278 942 M640 932 Q784 920 900 934" fill="none" stroke="#7d9f7c" stroke-opacity=".22" stroke-width="2"/>
+            </g>
+            
+            <g id="specimenHeading">
+              <text x="35" y="44" font-family="'Newsreader', Georgia, serif" font-size="24" font-weight="600" fill="#002855">YOUNG SHADE TREE • STRUCTURAL PRUNING</text>
+              <text x="35" y="72" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="500" fill="#52675c">Plate AGEH-08 • Select Tree Type, Evaluate Leader & Scaffold Balance</text>
+            </g>
+
+            <!-- Woody framework and growth layers -->
+            <g id="wood"></g>
+            <g id="growth" pointer-events="none"></g>
+
+            <!-- Soil line aesthetic anchor -->
+            <path d="M110 960 Q450 946 790 960" fill="none" stroke="#bac4b6" stroke-width="2.5" stroke-dasharray="6 4"/>
+            <text x="450" y="982" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#8c9e92" text-anchor="middle" letter-spacing="1">ROOT FLARE / SOIL GRADE</text>
+
+            <!-- Overlays: Leader, Cut Markers, Drawn Markup, Branch Labels -->
+            <g id="leaderOverlay" class="leader-overlay"></g>
+            <g id="cutMarkers"></g>
+            <g id="marks"></g>
+            <g id="labels"></g>
+
+            <text x="35" y="1018" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" fill="#697f74">
+              Illustrative growth response • High vigor and 2× shoot extension for teaching visibility
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Specimen Plate Footer Legend & Live Status -->
+      <div class="plate-status-bar">
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span id="status">Step 1: Choose a colored pen and mark your proposed cuts on the tree.</span>
+        </div>
+
+        <div class="legend-chips">
+          <div class="chip-item">
+            <span class="chip-dot" style="background:#2c9858;"></span>
+            <span>1-Yr Shoots</span>
+          </div>
+          <div class="chip-item">
+            <span class="chip-dot" style="background:#c62828;"></span>
+            <span>Removal</span>
+          </div>
+          <div class="chip-item">
+            <span class="chip-dot" style="background:#1769c2;"></span>
+            <span>Reduction</span>
+          </div>
+          <div class="chip-item">
+            <span class="chip-dot" style="background:#ed7b13;"></span>
+            <span>Heading</span>
+          </div>
+          <div class="chip-item">
+            <span class="chip-dot" style="background:#227b39;"></span>
+            <span>Leader / Retained</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- Right Column: Professional Field Notebook & Decision Management -->
+    <aside class="notebook-panel">
+
+      <!-- Dynamic Context Action Card -->
+      <div class="card" id="contextualCard">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span id="contextTitle">Stage 1 • Markup Instructions</span>
+          </h2>
+          <span class="badge-soft" id="contextBadge">Field Protocol</span>
+        </div>
+
+        <div class="instruction-callout" id="selectedInfo">
+          Select a markup pen above. Draw proposing cuts on the tree limbs. Mark red for removal, blue for reduction back to a lateral, or green for your desired leader.
+        </div>
+
+        <!-- Leader Prompt Banner -->
+        <div class="leader-alert-banner" id="leaderHelp" role="status">
+          <strong>Central Leader Identification:</strong> Select <strong>START</strong> on the trunk/base, then click <strong>STOP</strong> farther up along your desired continuous vertical path.
+          <div style="margin-top:8px;">
+            <button class="action-btn" id="cancelLeader" type="button" style="padding:4px 9px; font-size:12px;">Cancel start</button>
+          </div>
+        </div>
+
+        <!-- Growth Controls (Step 3 Focus) -->
+        <div class="growth-box" id="growthSettingsBox">
+          <p style="font-weight:750;font-size:13px;margin:0 0 8px;">Selected tree architecture: <span id="budPatternBadge">Not selected</span></p>
+
+          <p style="font-size:12.5px; color:var(--forest-green-dark); margin:0 0 8px;" id="budExplanation">
+            Alternate: single shoots emerge at staggered individual nodes along retained wood.
+          </p>
+
+          <div class="growth-stats-grid">
+            <div class="stat-tile">
+              <span class="num" id="statNewShoots">0</span>
+              <span class="lbl">New Shoots Grown</span>
+            </div>
+            <div class="stat-tile">
+              <span class="num" id="statRetainedLimbs">8</span>
+              <span class="lbl">Active Scaffold Limbs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Central Leader Status Badge -->
+        <div style="background:#f4f7f4; border:1px solid #d4e2d4; border-radius:var(--radius-md); padding:10px 12px; font-size:12.5px; color:var(--forest-green); margin-bottom:12px;" id="leaderSummary">
+          No central leader selected yet.
+        </div>
+      </div>
+
+      <!-- Decision Log / Record of Cuts -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <span>Arborist Cut Decisions</span>
+          </h2>
+          <span class="badge-soft" id="cutCountBadge">0 actions</span>
+        </div>
+
+        <div class="action-history-wrap">
+          <ol id="cutLog" class="action-history-list">
+            <li class="empty-log">No pruning cuts recorded yet.</li>
+          </ol>
+        </div>
+
+        <div class="log-controls">
+          <button class="action-btn" id="undo" style="flex:1;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            <span>Undo Cut</span>
+          </button>
+          <button class="action-btn" id="reset" style="flex:1;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            <span>Restore Tree</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Student Planning Notes & Reasoning -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <span>Student Field Observations</span>
+          </h2>
+          <span class="badge-soft">AGEH-08</span>
+        </div>
+
+        <label for="notes" class="form-label">Structural Strategy & Rationale</label>
+        <textarea id="notes" class="field-textarea" placeholder="Describe your structural intent: dominant leader preservation, subordination of codominant uprights, temporary branch retention, clearance requirements..."></textarea>
+      </div>
+
+      <!-- Export & Assignment Submission -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export & Save Work</span>
+          </h2>
+        </div>
+
+        <div class="export-grid">
+          <button class="btn-export" id="png">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Export PNG</span>
+          </button>
+          <button class="btn-export" id="svgDownload">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <span>Editable SVG</span>
+          </button>
+          <button class="btn-export" id="record">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Decision Log</span>
+          </button>
+          <button class="btn-export" id="print">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Print / PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Field Reference Standards -->
+      <div class="card" style="background:#f7f9f7;">
+        <div class="card-header">
+          <h2 class="card-title" style="font-size:15px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>ANSI A300 Pruning Reference</span>
+          </h2>
+        </div>
+
+        <div class="field-ref-card">
+          <div class="field-ref-title">
+            <span class="indicator" style="background:#1769c2;"></span>
+            <span>Reduction Cut to Lateral</span>
+          </div>
+          Shortens a stem to a lateral branch capable of assuming dominance (typically at least 1/3 the diameter of the parent). Reduces height/spread while avoiding heading epicormics.
+        </div>
+
+        <div class="field-ref-card">
+          <div class="field-ref-title">
+            <span class="indicator" style="background:#c62828;"></span>
+            <span>Removal Cut at Collar</span>
+          </div>
+          Removes an entire branch at its origin outside the branch bark ridge and collar. Never cut flush against the trunk to allow defense zone compartmentalization.
+        </div>
+
+        <div class="field-ref-card">
+          <div class="field-ref-title">
+            <span class="indicator" style="background:#ed7b13;"></span>
+            <span>Heading Cut (Internodal)</span>
+          </div>
+          Cuts between nodes, destroying apical dominance and stimulating vigorous uncoordinated watersprouts below the cut. Rarely recommended on young shade trees.
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Application Sub-Footer -->
+  <footer class="app-footer">
+    <div>
+      <strong>AGEH-08 Landscape Maintenance</strong> • Plant Science & Agriculture Division, Merced College
+    </div>
+    <div class="footer-links">
+      <a href="#drawing" onclick="window.scrollTo({top:0, behavior:'smooth'})">Return to Top</a>
+      <span>•</span>
+      <span>Pruning concepts informed by ANSI A300</span>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Vector Pruning Engine -->
+  <script>
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.getElementById('drawing');
+    const wood = document.getElementById('wood');
+    const growth = document.getElementById('growth');
+    const leaderOverlay = document.getElementById('leaderOverlay');
+    const markers = document.getElementById('cutMarkers');
+    const marks = document.getElementById('marks');
+    const labels = document.getElementById('labels');
+    const paper = document.getElementById('paper');
+    
+    const $ = id => document.getElementById(id);
+    const KEY = 'ageh08-tree-growth-stitch-forest-v2-branching';
+
+    // Original Young Shade Tree Vector Architecture
+    const trunk = [[450,950],[447,850],[452,725],[448,590],[455,460],[450,330],[462,200],[457,94]];
+    const limbs = [
+      [[450,807],[388,768],[321,743],[247,703],[180,689]],
+      [[452,748],[527,716],[593,670],[658,642],[723,603]],
+      [[449,652],[390,598],[337,527],[293,454],[252,361],[228,276],[221,185]],
+      [[451,590],[515,519],[561,434],[588,337],[611,240],[642,143]],
+      [[453,496],[385,465],[325,420],[270,409],[198,364],[138,348]],
+      [[453,426],[510,399],[562,370],[631,362],[704,325],[758,286]],
+      [[452,333],[404,289],[369,230],[350,164]],
+      [[459,234],[510,203],[540,155]]
+    ];
+    const widths = [6,7,10,10,6,6,5,4];
+    const nodes = [];
+
+    function addNode(id, parent, points, width, label) {
+      nodes.push({ id, parent, points, width, label, baseLength: polyLen(points) });
+    }
+
+    function polyLen(ps) {
+      let x = 0;
+      for (let i = 1; i < ps.length; i++) {
+        x += Math.hypot(ps[i][0] - ps[i-1][0], ps[i][1] - ps[i-1][1]);
+      }
+      return x;
+    }
+
+    // Tree architecture is built from the selected bud arrangement BEFORE pruning.
+    // IDs are deliberately stable within each model. Switching tree type resets cuts
+    // because a cut on one physical branch cannot automatically transfer to another tree.
+    const byId = {};
+    function buildTree(pattern) {
+      nodes.length = 0;
+      for (const id of Object.keys(byId)) delete byId[id];
+      addNode('T', null, trunk, 15, 'Central leader / trunk');
+      const arrangedLimbs = limbs.map((pts, j) => {
+        if (pattern !== 'opposite' || j % 2 === 0) return pts.map(pt => [...pt]);
+        // Pair major right-side scaffold attachments with the preceding left-side
+        // branch at the same trunk node, without changing their general silhouette.
+        const partner = limbs[j-1][0];
+        const dx = partner[0] - pts[0][0], dy = partner[1] - pts[0][1];
+        return pts.map(pt => [pt[0]+dx, pt[1]+dy]);
+      });
+      arrangedLimbs.forEach((pts, j) => {
+        const id = String.fromCharCode(65+j);
+        addNode(id,'T',pts,widths[j],'Major scaffold branch '+id);
+        for (let i=1;i<pts.length-1;i++) {
+          const a=pts[i], prev=pts[i-1];
+          const dx=a[0]-prev[0],dy=a[1]-prev[1];
+          const len=Math.hypot(dx,dy)||1;
+          const side=(i+j)%2?1:-1;
+          const L=39+(i*13+j*7)%34;
+          const makeLateral=(name,direction,scale=1)=>{
+            const q=[a[0]+dx/len*L*.6*scale-dy/len*direction*L*.65*scale,
+                     a[1]+dy/len*L*.6*scale+dx/len*direction*L*.65*scale-15*scale];
+            const mid=[(a[0]+q[0])/2+direction*4,(a[1]+q[1])/2];
+            addNode(name,id,[a,mid,q],Math.max(1.5,widths[j]*.38),'Lateral on '+id);
+            const r=[q[0]+direction*15,q[1]-24*scale];
+            addNode(name+'a',name,[[(a[0]+q[0])/2,(a[1]+q[1])/2],r],1.3,'Secondary twig on '+id);
+          };
+          makeLateral(id+'-'+i,side);
+          if (pattern==='opposite') {
+            // An opposite node supports a second lateral on the other side.
+            // Unequal length avoids a fake, perfectly mirrored tree.
+            makeLateral(id+'-'+i+'-pair',-side,.78+(i%2)*.11);
+          }
+        }
+      });
+      if (pattern==='opposite') {
+        const stemBudNodes=[[455,460],[450,366],[458,280],[460,176],[458,128]];
+        stemBudNodes.forEach((v,i)=>{
+          addNode('T-'+(i+1),'T',[[v[0],v[1]],[v[0]-34-(i%2)*7,v[1]-23]],2.5,'Leader lateral '+(i+1));
+          addNode('T-'+(i+1)+'-pair','T',[[v[0],v[1]],[v[0]+29+(i%2)*8,v[1]-26]],2.3,'Opposite leader lateral '+(i+1));
+        });
+      } else {
+        [[455,460,493,439],[450,366,420,339],[458,280,425,253],[460,176,488,148],[458,128,436,108]].forEach((v,i)=>{
+          addNode('T-'+(i+1),'T',[[v[0],v[1]],[v[2],v[3]]],2.5,'Leader lateral '+(i+1));
+        });
+      }
+      for (const node of nodes) byId[node.id]=node;
+    }
+    buildTree('alternate');
+
+    let actions = [];
+    let drawn = [];
+    let mode = 'mark';
+    let currentStep = 1;
+    let tool = 'remove';
+    let markColor = '#c62828';
+    let active = null;
+    let leaderStart = null;
+    let budPattern = null;
+    let grownCount = 0;
+
+    // Load persistent state
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY));
+      if (saved) {
+        actions = Array.isArray(saved.actions) ? saved.actions : [];
+        drawn = Array.isArray(saved.drawn) ? saved.drawn : [];
+        if ($('notes')) $('notes').value = saved.notes || '';
+        budPattern = saved.budPattern === 'opposite' ? 'opposite' : saved.budPattern === 'alternate' ? 'alternate' : null;
+        if (budPattern) buildTree(budPattern);
+      }
+    } catch (e) {
+      console.warn('Local storage load note', e);
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify({
+          actions,
+          drawn,
+          notes: $('notes') ? $('notes').value : '',
+          budPattern
+        }));
+      } catch (e) {}
+    }
+
+    function path(ps) {
+      return ps.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' ');
+    }
+
+    function svgEl(tag, attrs, into) {
+      const el = document.createElementNS(NS, tag);
+      Object.entries(attrs || {}).forEach(([k, v]) => el.setAttribute(k, v));
+      if (into) into.append(el);
+      return el;
+    }
+
+    function point(e) {
+      const p = svg.createSVGPoint();
+      p.x = e.clientX;
+      p.y = e.clientY;
+      return p.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function nearest(points, p) {
+      let best = { dist: Infinity, fraction: 0, along: 0, pos: points[0] };
+      let traveled = 0, total = polyLen(points);
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[i], b = points[i+1];
+        const dx = b[0] - a[0], dy = b[1] - a[1];
+        const len2 = dx * dx + dy * dy;
+        const t = Math.max(0, Math.min(1, len2 ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2 : 0));
+        const q = [a[0] + t * dx, a[1] + t * dy];
+        const dist = Math.hypot(p[0] - q[0], p[1] - q[1]);
+        if (dist < best.dist) {
+          best = { dist, along: traveled + Math.sqrt(len2) * t, fraction: (traveled + Math.sqrt(len2) * t) / (total || 1), pos: q };
+        }
+        traveled += Math.sqrt(len2);
+      }
+      return best;
+    }
+
+    function pointAt(ps, fraction) {
+      const goal = polyLen(ps) * fraction;
+      let done = 0;
+      for (let i = 1; i < ps.length; i++) {
+        let d = Math.hypot(ps[i][0] - ps[i-1][0], ps[i][1] - ps[i-1][1]);
+        if (done + d >= goal) {
+          let t = (goal - done) / (d || 1);
+          return [ps[i-1][0] + t * (ps[i][0] - ps[i-1][0]), ps[i-1][1] + t * (ps[i][1] - ps[i-1][1])];
+        }
+        done += d;
+      }
+      return ps[ps.length - 1];
+    }
+
+    function clip(ps, f) {
+      if (f >= 0.999) return ps.slice();
+      if (f <= 0.001) return [];
+      let end = pointAt(ps, f), res = [ps[0]], goal = polyLen(ps) * f, done = 0;
+      for (let i = 1; i < ps.length; i++) {
+        let d = Math.hypot(ps[i][0] - ps[i-1][0], ps[i][1] - ps[i-1][1]);
+        if (done + d >= goal) {
+          res.push(end);
+          break;
+        }
+        res.push(ps[i]);
+        done += d;
+      }
+      return res;
+    }
+
+    function parentVisibleAt(node, all) {
+      if (!node.parent) return true;
+      const par = all[node.parent];
+      if (!par || !par.visible) return false;
+      const q = nearest(byId[node.parent].points, node.points[0]);
+      return q.fraction <= par.fraction + 0.012;
+    }
+
+    function compute() {
+      let result = {};
+      for (const n of nodes) {
+        let f = 1, keep = true;
+        for (const a of actions) {
+          if (a.id !== n.id) continue;
+          if (a.kind === 'retain' || a.kind === 'leader') continue;
+          if (a.kind === 'remove') { f = 0; keep = false; }
+          else f = Math.min(f, a.fraction);
+        }
+        result[n.id] = { fraction: f, visible: keep && f > 0.015 };
+      }
+      for (const n of nodes) {
+        if (!parentVisibleAt(n, result)) result[n.id].visible = false;
+      }
+      return result;
+    }
+
+    function junctions(n, result) {
+      const lateralCandidates = nodes.filter(k => k.parent === n.id && result[k.id]?.visible).map(child => ({
+        ...nearest(n.points, child.points[0]),
+        child: child.id
+      }));
+      return lateralCandidates.filter(x => x.fraction > 0.08 && x.fraction < result[n.id].fraction - 0.025);
+    }
+
+    function updateSelected() {
+      const messages = {
+        remove: 'Removal cut: click near the branch collar/attachment (within the first 24% of branch length) to cleanly remove the scaffold branch.',
+        reduce: 'Reduction to lateral: click an existing blue lateral branch junction to shorten the parent branch while preserving the subordinate lateral.',
+        head: 'Heading cut: click an internodal position along a branch. The distal portion will be pruned and vigorous watersprouts will break in Step 3.',
+        retain: 'Retain branch: click a branch to register it for preservation without making cuts.',
+        leader: 'Central leader path: click START at the trunk/base, then click STOP farther up along your proposed central leader growth path.'
+      };
+      if (mode === 'cut') {
+        $('selectedInfo').textContent = messages[tool] || '';
+      }
+      $('leaderHelp').classList.toggle('show', tool === 'leader' && mode === 'cut');
+    }
+
+    function leaderRoute(start, stop) {
+      if (start.id === stop.id) {
+        if (stop.fraction <= start.fraction + 0.015) return null;
+        return [{ id: start.id, from: start.fraction, to: stop.fraction }];
+      }
+      if (start.id !== 'T') return null;
+      let current = byId[stop.id], route = [], guard = 0;
+      while (current && current.id !== 'T' && guard++ < 10) {
+        const origin = nearest(byId[current.parent].points, current.points[0]);
+        route.unshift({ id: current.id, from: 0, to: current.id === stop.id ? stop.fraction : 1 });
+        if (current.parent === 'T') {
+          if (origin.fraction <= start.fraction + 0.015) return null;
+          route.unshift({ id: 'T', from: start.fraction, to: origin.fraction });
+          return route;
+        }
+        current = byId[current.parent];
+      }
+      return null;
+    }
+
+    function leaderRouteVisible(route, states) {
+      if (!route) return false;
+      return route.every(part => states[part.id]?.visible && part.to <= states[part.id].fraction + 0.002);
+    }
+
+    function selectLeaderPoint(id, pt, st) {
+      const selection = { id, fraction: Math.min(pt.fraction, st.fraction) };
+      if (!leaderStart) {
+        leaderStart = selection;
+        $('status').textContent = 'START marked. Now click STOP farther up the trunk or along a connected upright branch.';
+        render();
+        return;
+      }
+      const route = leaderRoute(leaderStart, selection);
+      if (!route) {
+        $('status').textContent = 'STOP must lie farther along the same stem, or on a branch connected above START. Click another STOP or cancel.';
+        return;
+      }
+      if (!leaderRouteVisible(route, compute())) {
+        $('status').textContent = 'Part of that proposed leader has already been cut away. Choose an intact growth path.';
+        return;
+      }
+      actions.push({ id: 'T', kind: 'leader', start: leaderStart, stop: selection });
+      leaderStart = null;
+      $('status').textContent = 'Student-selected central leader confirmed in green. Recorded in assignment decisions.';
+      render();
+    }
+
+    function partialPath(ps, from, to) {
+      const all = clip(ps, to), origin = pointAt(ps, from), res = [origin];
+      let used = 0, total = polyLen(ps);
+      for (let i = 1; i < ps.length; i++) {
+        used += Math.hypot(ps[i][0] - ps[i-1][0], ps[i][1] - ps[i-1][1]);
+        const f = used / (total || 1);
+        if (f > from + 0.0001 && f < to - 0.0001) res.push(ps[i]);
+      }
+      res.push(pointAt(ps, to));
+      return res;
+    }
+
+    function leaderShortDescription(pt) {
+      return (pt.id === 'T' ? 'Trunk' : pt.id) + ' (' + Math.round(pt.fraction * 100) + '%)';
+    }
+
+    function leaderSummaryText() {
+      const last = actions.filter(a => a.kind === 'leader')[actions.filter(a => a.kind === 'leader').length - 1];
+      return last ? 'Student proposed central leader: ' + leaderShortDescription(last.start) + ' → ' + leaderShortDescription(last.stop) + '.' : 'Not selected.';
+    }
+
+    function renderLeader(states) {
+      const last = actions.filter(a => a.kind === 'leader')[actions.filter(a => a.kind === 'leader').length - 1];
+      const route = last ? leaderRoute(last.start, last.stop) : null;
+      const valid = route && leaderRouteVisible(route, states);
+      
+      $('leaderSummary').innerHTML = last
+        ? (valid 
+            ? '<strong>Identified Leader:</strong> <span style="color:#22843c;font-weight:700;">' + leaderShortDescription(last.start) + ' → ' + leaderShortDescription(last.stop) + '</span> (highlighted on tree).'
+            : '<span style="color:#c62828;">Leader was interrupted by a later pruning cut. Select a new intact path.</span>')
+        : '<em>No central leader identified yet. Switch to "Identify Central Leader" in Step 2.</em>';
+
+      if (valid) {
+        for (const part of route) {
+          const points = partialPath(byId[part.id].points, part.from, part.to);
+          svgEl('path', { d: path(points), stroke: '#ffffff', 'stroke-width': 14, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.85 }, leaderOverlay);
+          svgEl('path', { d: path(points), stroke: '#22843c', 'stroke-width': 7.5, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, leaderOverlay);
+        }
+        const startP = pointAt(byId[last.start.id].points, last.start.fraction);
+        const endP = pointAt(byId[last.stop.id].points, last.stop.fraction);
+        for (const [pt, label] of [[startP, 'START'], [endP, 'STOP']]) {
+          svgEl('circle', { cx: pt[0], cy: pt[1], r: 10, fill: '#227b39', stroke: '#ffffff', 'stroke-width': 3 }, leaderOverlay);
+          const tx = pt[0] + 18, ty = pt[1] + (label === 'STOP' ? -22 : 24);
+          const text = svgEl('text', { x: tx, y: ty, fill: '#16682f', 'font-size': 14, 'font-weight': 'bold', 'font-family': 'sans-serif', stroke: 'white', 'stroke-width': 3, 'paint-order': 'stroke' }, leaderOverlay);
+          text.textContent = label;
+        }
+      }
+      if (leaderStart) {
+        const pt = pointAt(byId[leaderStart.id].points, leaderStart.fraction);
+        svgEl('circle', { cx: pt[0], cy: pt[1], r: 11, fill: '#227b39', stroke: 'white', 'stroke-width': 3 }, leaderOverlay);
+        const text = svgEl('text', { x: pt[0] + 18, y: pt[1] - 14, fill: '#16682f', 'font-family': 'sans-serif', 'font-size': 16, 'font-weight': 'bold', stroke: 'white', 'stroke-width': 3, 'paint-order': 'stroke' }, leaderOverlay);
+        text.textContent = 'START — select STOP';
+      }
+    }
+
+    function vec(a, b) {
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      const d = Math.hypot(dx, dy) || 1;
+      return [dx / d, dy / d];
+    }
+
+    function clamp(v, a, b) {
+      return Math.max(a, Math.min(b, v));
+    }
+
+    function tangentAt(ps, f) {
+      const p = pointAt(ps, clamp(f - 0.018, 0, 1));
+      const q = pointAt(ps, clamp(f + 0.018, 0, 1));
+      return vec(p, q);
+    }
+
+    function drawNewShoot(origin, direction, distance, width = 2.8, makeSideBud = false) {
+      const x = origin[0], y = origin[1];
+      const norm = Math.hypot(direction[0], direction[1]) || 1;
+      const dir = [direction[0] / norm, direction[1] / norm];
+      const end = [clamp(x + dir[0] * distance, 12, 888), clamp(y + dir[1] * distance, -155, 937)];
+      const dx = end[0] - x, dy = end[1] - y;
+      if (Math.hypot(dx, dy) < 4) return;
+      
+      const bend = (dir[0] < 0 ? -1 : 1) * Math.min(15, distance * 0.10);
+      const mid = [x + dx * 0.53 + bend * 0.52, y + dy * 0.53 - 5];
+      const firstCtrl = [x + dx * 0.22 + bend * 0.30, y + dy * 0.26 - 3];
+      const secondCtrl = [x + dx * 0.78 + bend * 0.22, y + dy * 0.79 - 4];
+      const d1 = `M${x.toFixed(1)} ${y.toFixed(1)} Q${firstCtrl[0].toFixed(1)} ${firstCtrl[1].toFixed(1)} ${mid[0].toFixed(1)} ${mid[1].toFixed(1)}`;
+      const d2 = `M${mid[0].toFixed(1)} ${mid[1].toFixed(1)} Q${secondCtrl[0].toFixed(1)} ${secondCtrl[1].toFixed(1)} ${end[0].toFixed(1)} ${end[1].toFixed(1)}`;
+      
+      svgEl('path', { d: d1, stroke: '#2a8952', 'stroke-width': width, fill: 'none', 'stroke-linecap': 'round' }, growth);
+      svgEl('path', { d: d2, stroke: '#379c60', 'stroke-width': Math.max(1.1, width * 0.57), fill: 'none', 'stroke-linecap': 'round' }, growth);
+      grownCount++;
+      
+      if (makeSideBud) {
+        const side = dir[0] >= 0 ? 1 : -1;
+        drawNewShoot(mid, [dir[0] * 0.18 - side * 0.55, Math.min(-0.4, dir[1])], Math.min(37, distance * 0.38), 1.35, false);
+      }
+    }
+
+    function sideDirection(t, side) {
+      const dx = t[0] * 0.22 + side * 0.77;
+      const dy = -0.70 + t[1] * 0.13;
+      const d = Math.hypot(dx, dy) || 1;
+      return [dx / d, dy / d];
+    }
+
+    function renderGrowth(states) {
+      grownCount = 0;
+      const recentCuts = new Map();
+      for (const a of actions) {
+        if (['head', 'reduce', 'remove'].includes(a.kind)) recentCuts.set(a.id, a);
+      }
+      const reductionFavored = new Set();
+      
+      for (const [id, a] of recentCuts) {
+        if (a.kind !== 'reduce') continue;
+        const n = byId[id];
+        const junction = junctions(n, { ...states, [id]: { ...states[id], fraction: Math.min(1, a.fraction + 0.08) } })
+          .find(j => Math.abs(j.fraction - a.fraction) < 0.065);
+        if (junction) reductionFavored.add(junction.child);
+        for (const child of nodes.filter(x => x.parent === id && states[x.id]?.visible)) {
+          const near = nearest(n.points, child.points[0]);
+          if (Math.abs(near.fraction - a.fraction) < 0.035) reductionFavored.add(child.id);
+        }
+      }
+
+      for (let j = 0; j < nodes.length; j++) {
+        const n = nodes[j], st = states[n.id];
+        if (!st?.visible) continue;
+        const cut = recentCuts.get(n.id);
+        const isHeading = cut?.kind === 'head' && Math.abs(st.fraction - cut.fraction) < 0.02;
+        const isReduction = cut?.kind === 'reduce' && Math.abs(st.fraction - cut.fraction) < 0.02;
+        const tip = pointAt(n.points, st.fraction);
+        const v = tangentAt(n.points, Math.max(0.1, st.fraction - 0.035));
+        const fullTip = st.fraction > 0.995;
+        let eligible = n.id === 'T' || n.parent === 'T' || reductionFavored.has(n.id) || (n.id.includes('-') && !n.id.endsWith('a') && (j % 3 === 0));
+
+        if (fullTip && eligible) {
+          const dist = n.id === 'T' ? 106 : reductionFavored.has(n.id) ? 130 : n.parent === 'T' ? 96 : 58;
+          const dx = v[0] * 0.85, dy = Math.min(-0.29, v[1]);
+          const len = Math.hypot(dx, dy) || 1;
+          drawNewShoot(tip, [dx / len, dy / len], dist, n.id === 'T' ? 4.0 : reductionFavored.has(n.id) ? 3.6 : 2.9, n.id === 'T' || reductionFavored.has(n.id));
+        }
+
+        if (isHeading) {
+          if (budPattern === 'alternate') {
+            const positions = [0.64, 0.79, 0.92];
+            for (let i = 0; i < positions.length; i++) {
+              const f = st.fraction * positions[i], p = pointAt(n.points, f), t = tangentAt(n.points, f);
+              const side = ((i + j) % 2 === 0) ? 1 : -1;
+              drawNewShoot(p, sideDirection(t, side), [70, 96, 132][i], 2.2 + i * 0.35, i === 2);
+            }
+          } else {
+            const f = st.fraction * 0.91, p = pointAt(n.points, f), t = tangentAt(n.points, f);
+            for (const side of [-1, 1]) {
+              drawNewShoot(p, sideDirection(t, side), side === 1 ? 136 : 125, 3.0, side === 1);
+            }
+            const lowF = st.fraction * 0.61, lo = pointAt(n.points, lowF), lt = tangentAt(n.points, lowF);
+            drawNewShoot(lo, sideDirection(lt, -1), 64, 1.9, false);
+            drawNewShoot(lo, sideDirection(lt, 1), 48, 1.6, false);
+          }
+        } else if (!isReduction) {
+          const visibleLength = n.baseLength * st.fraction;
+          if (visibleLength >= 19) {
+            const isTrunk = n.id === 'T', isMajor = n.parent === 'T' && !isTrunk;
+            const isFine = n.id.endsWith('a');
+            const positions = isTrunk ? [0.59, 0.82] : isMajor ? [0.41, 0.73] : isFine ? [0.70] : [0.48, 0.83];
+            for (let i = 0; i < positions.length; i++) {
+              const f = st.fraction * positions[i], p = pointAt(n.points, f), t = tangentAt(n.points, f);
+              const crowded = nodes.some(ch => ch.parent === n.id && states[ch.id]?.visible && Math.hypot(ch.points[0][0] - p[0], ch.points[0][1] - p[1]) < 16);
+              if (crowded) continue;
+              if (isFine && ((j + i) % 3 === 1)) continue;
+              const scale = isTrunk ? 1.0 : isMajor ? 0.82 : isFine ? 0.40 : 0.56;
+              if (budPattern === 'alternate') {
+                const side = ((j + i) % 2 === 0) ? 1 : -1;
+                drawNewShoot(p, sideDirection(t, side), (i === 0 ? 68 : 89) * scale, Math.max(1.2, 2.5 * scale), false);
+              } else {
+                const base = (i === 0 ? 72 : 91) * scale;
+                drawNewShoot(p, sideDirection(t, -1), base * 0.88, Math.max(1.1, 2.25 * scale), false);
+                drawNewShoot(p, sideDirection(t, 1), base * 1.09, Math.max(1.1, 2.45 * scale), false);
+              }
+            }
+          }
+        }
+      }
+      $('statNewShoots').textContent = grownCount;
+      return grownCount;
+    }
+
+    function render() {
+      svg.setAttribute('viewBox', mode === 'growth' ? '0 -190 900 1240' : '0 0 900 1050');
+      wood.replaceChildren();
+      growth.replaceChildren();
+      leaderOverlay.replaceChildren();
+      markers.replaceChildren();
+      labels.replaceChildren();
+      marks.replaceChildren();
+
+      const states = compute();
+
+      // Render woody architecture
+      for (const n of nodes) {
+        const st = states[n.id];
+        if (!st.visible) continue;
+        const pts = clip(n.points, st.fraction);
+        if (pts.length < 2) continue;
+        const p = svgEl('path', {
+          d: path(pts),
+          stroke: '#6f5946',
+          'stroke-width': n.width,
+          fill: 'none',
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          class: 'wood-piece',
+          'data-id': n.id
+        }, wood);
+        p.addEventListener('click', e => {
+          e.stopPropagation();
+          if (mode === 'cut') apply(n.id, [point(e).x, point(e).y]);
+        });
+      }
+
+      // Invisible generous hit targets for delicate secondary twigs
+      for (const n of nodes) {
+        const st = states[n.id];
+        if (!st.visible) continue;
+        const pts = clip(n.points, st.fraction);
+        if (pts.length < 2) continue;
+        const hit = svgEl('path', {
+          d: path(pts),
+          stroke: 'transparent',
+          'stroke-width': Math.max(n.width + 12, 16),
+          fill: 'none',
+          'pointer-events': 'stroke',
+          'data-hit': n.id
+        }, wood);
+        hit.addEventListener('click', e => {
+          e.stopPropagation();
+          if (mode === 'cut') apply(n.id, [point(e).x, point(e).y]);
+        });
+      }
+
+      // Growth overlay
+      if (mode === 'growth') {
+        renderGrowth(states);
+      } else {
+        $('statNewShoots').textContent = '—';
+      }
+
+      // Count active scaffold branches (A through H)
+      let activeScaffolds = 0;
+      for (let i = 0; i < limbs.length; i++) {
+        const id = String.fromCharCode(65 + i);
+        if (states[id]?.visible) activeScaffolds++;
+      }
+      $('statRetainedLimbs').textContent = activeScaffolds;
+
+      // Reduction candidate markers
+      if (tool === 'reduce' && mode === 'cut') {
+        for (const n of nodes) {
+          if (!states[n.id].visible) continue;
+          for (const j of junctions(n, states)) {
+            svgEl('circle', {
+              cx: j.pos[0],
+              cy: j.pos[1],
+              r: 8,
+              fill: '#1769c2',
+              stroke: '#ffffff',
+              'stroke-width': 2.5,
+              'data-junction': n.id,
+              style: 'cursor:pointer; filter:drop-shadow(0 2px 4px rgba(0,40,85,0.4));'
+            }, markers).addEventListener('click', e => {
+              e.stopPropagation();
+              apply(n.id, [j.pos[0], j.pos[1]]);
+            });
+          }
+        }
+      }
+
+      // Action markers on wood
+      for (const a of actions) {
+        if (mode === 'growth') break;
+        if (a.kind === 'retain' && states[a.id]?.visible) {
+          const p = pointAt(byId[a.id].points, Math.min(0.75, states[a.id].fraction * 0.8));
+          svgEl('circle', { cx: p[0], cy: p[1], r: 12, fill: 'none', stroke: '#227b39', 'stroke-width': 3, class: 'cut-marker' }, markers);
+        } else if (a.kind !== 'retain' && a.kind !== 'remove') {
+          const p = pointAt(byId[a.id].points, a.fraction);
+          svgEl('circle', { cx: p[0], cy: p[1], r: 5, fill: a.kind === 'reduce' ? '#1769c2' : '#ed7b13', stroke: '#ffffff', 'stroke-width': 2, class: 'cut-marker' }, markers);
+        }
+      }
+
+      // Student Leader Path
+      renderLeader(states);
+
+      // Render Freehand markup strokes
+      for (const m of drawn) {
+        svgEl('path', { d: m.d, stroke: m.color, 'stroke-width': 6, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, marks);
+      }
+
+      // Scaffold branch tags (A through H)
+      for (let i = 0; i < limbs.length; i++) {
+        const id = String.fromCharCode(65 + i);
+        const n = byId[id];
+        if (!states[id]?.visible) continue;
+        const st = states[id];
+        const pt = pointAt(n.points, Math.min(0.95, st.fraction));
+        let x = pt[0] + (pt[0] < 450 ? -22 : 22);
+        let y = pt[1] - 14;
+        svgEl('circle', { cx: x, cy: y, r: 14, fill: '#ffffff', stroke: '#002855', 'stroke-width': 1.8 }, labels);
+        const t = svgEl('text', { x, y: y + 5.5, 'text-anchor': 'middle', class: 'branch-label' }, labels);
+        t.textContent = id;
+      }
+
+      // Cut decisions log list
+      $('cutLog').replaceChildren();
+      if (!actions.length) {
+        const li = document.createElement('li');
+        li.className = 'empty-log';
+        li.textContent = 'No pruning cuts recorded yet.';
+        $('cutLog').append(li);
+        $('cutCountBadge').textContent = '0 cuts';
+      } else {
+        $('cutCountBadge').textContent = actions.length + (actions.length === 1 ? ' cut' : ' cuts');
+        for (const [i, a] of actions.entries()) {
+          const li = document.createElement('li');
+          const n = byId[a.id];
+          let desc = (n?.label || a.id) + ' — ';
+          if (a.kind === 'leader') {
+            desc += 'identified central leader (' + leaderShortDescription(a.start) + ' → ' + leaderShortDescription(a.stop) + ')';
+          } else if (a.kind === 'remove') {
+            desc += 'removed cleanly at collar';
+          } else if (a.kind === 'reduce') {
+            desc += 'reduced to retained lateral junction';
+          } else if (a.kind === 'head') {
+            desc += 'internodal heading cut';
+          } else {
+            desc += 'marked retained';
+          }
+          li.textContent = desc;
+          $('cutLog').append(li);
+        }
+      }
+
+      const hasUndoable = actions.length > 0 || drawn.length > 0 || leaderStart !== null;
+      $('undo').disabled = !hasUndoable;
+      $('btnUndoPlate').disabled = !hasUndoable;
+      save();
+    }
+
+    function apply(id, xy) {
+      const n = byId[id], st = compute()[id];
+      if (!st?.visible) {
+        $('status').textContent = 'That branch segment has already been pruned away.';
+        return;
+      }
+      const pt = nearest(n.points, xy);
+      let frac = pt.fraction;
+
+      if (tool === 'remove') {
+        if (frac > 0.24) {
+          $('status').textContent = 'Collar removal: click closer to branch origin (first 24%). For mid-branch cuts, use Reduction or Heading.';
+          return;
+        }
+        actions.push({ id, kind: 'remove', fraction: 0 });
+        $('status').textContent = (n.label || id) + ' removed at branch collar.';
+      } else if (tool === 'reduce') {
+        const candidates = junctions(n, compute());
+        const candidate = candidates.sort((a, b) => Math.abs(a.along - pt.along) - Math.abs(b.along - pt.along))[0];
+        if (!candidate || Math.hypot(candidate.pos[0] - xy[0], candidate.pos[1] - xy[1]) > 34) {
+          $('status').textContent = 'Reduction cut must terminate at an existing lateral. Click an indicated blue junction dot.';
+          return;
+        }
+        actions.push({ id, kind: 'reduce', fraction: candidate.fraction });
+        $('status').textContent = (n.label || id) + ' reduced back to lateral branch ' + candidate.child + '.';
+      } else if (tool === 'head') {
+        if (frac < 0.16 || frac > st.fraction - 0.05) {
+          $('status').textContent = 'Heading cut should be placed between branch junctions along the stem.';
+          return;
+        }
+        const near = junctions(n, compute()).some(j => Math.abs(j.fraction - frac) < 0.035);
+        if (near) {
+          $('status').textContent = 'That is a lateral junction. Use "Reduction to Lateral" or pick an internodal point.';
+          return;
+        }
+        actions.push({ id, kind: 'head', fraction: frac });
+        $('status').textContent = 'Heading cut placed on ' + (n.label || id) + ' (expect dense watersprouts in Step 3).';
+      } else if (tool === 'leader') {
+        selectLeaderPoint(id, pt, st);
+        return;
+      } else {
+        actions.push({ id, kind: 'retain', fraction: 1 });
+        $('status').textContent = (n.label || id) + ' marked for structural retention.';
+      }
+      render();
+    }
+
+    // Four-Stage Flow Coordination
+    function setStep(stepNum) {
+      currentStep = stepNum;
+      leaderStart = null;
+
+      // Update Top Nav Step indicators
+      [1, 2, 3, 4].forEach(s => {
+        const btn = $('step' + s + 'Btn');
+        btn.classList.toggle('active', s === stepNum);
+      });
+
+      // Switch toolbars on Specimen Plate
+      $('markTools').style.display = stepNum === 1 ? 'flex' : 'none';
+      $('cutTools').style.display = stepNum === 2 ? 'flex' : 'none';
+      $('growthTools').style.display = stepNum === 3 ? 'flex' : 'none';
+      $('reflectTools').style.display = stepNum === 4 ? 'flex' : 'none';
+
+      // Update mode for rendering engine
+      if (stepNum === 1) {
+        mode = 'mark';
+        paper.className = 'specimen-paper mark-mode';
+        $('currentToolCategory').textContent = 'Markup Drawing Pens (Step 1)';
+        $('contextTitle').textContent = 'Stage 1 • Plan Your Pruning';
+        $('contextBadge').textContent = 'Planning Phase';
+        $('stagePillText').textContent = 'Step 1: Mark proposed cuts with color pens before removing wood.';
+        $('selectedInfo').textContent = 'Study the young tree architecture. Identify your dominant central leader candidate and mark competing uprights or poorly spaced scaffold limbs in color.';
+        $('status').textContent = 'Step 1: Choose a markup pen and draw proposed cuts directly onto the tree.';
+      } else if (stepNum === 2) {
+        mode = 'cut';
+        paper.className = 'specimen-paper cut-mode';
+        $('currentToolCategory').textContent = 'Digital Pruning Cut Tools (Step 2)';
+        $('contextTitle').textContent = 'Stage 2 • Make the Cuts';
+        $('contextBadge').textContent = 'Active Pruning';
+        $('stagePillText').textContent = 'Step 2: Choose cut types and click branches to execute digital cuts.';
+        updateSelected();
+        $('status').textContent = 'Step 2: Digital cuts active. Click branches to make removal, reduction, or heading cuts.';
+      } else if (stepNum === 3) {
+        mode = 'growth';
+        paper.className = 'specimen-paper';
+        $('currentToolCategory').textContent = 'Vegetative Growth Response (Step 3)';
+        $('contextTitle').textContent = 'Stage 3 • One-Year Growth Response';
+        $('contextBadge').textContent = 'Simulation Active';
+        $('stagePillText').textContent = 'Step 3: One growing season later. Notice vigorous response on surviving stems.';
+        $('selectedInfo').textContent = 'One growing season later: green shoots emerge across the retained canopy. Compare extension from retained laterals with new shoots below heading cuts.';
+        $('status').textContent = 'Step 3: One growing season later. Growth follows the bud arrangement selected before Step 1.';
+      } else if (stepNum === 4) {
+        mode = 'growth';
+        paper.className = 'specimen-paper';
+        $('currentToolCategory').textContent = 'Assignment Reflection & Export (Step 4)';
+        $('contextTitle').textContent = 'Stage 4 • Reflect & Export';
+        $('contextBadge').textContent = 'Evaluation';
+        $('stagePillText').textContent = 'Step 4: Record your arborist reasoning and download your decision record.';
+        $('selectedInfo').textContent = 'Review the balance and canopy clearance of your pruned tree. Enter your structural goals in the Field Observations box and export your final assignment report.';
+        $('status').textContent = 'Step 4: Pruning sequence complete. Download your PNG, SVG, or Decision Log record.';
+      }
+
+      render();
+    }
+
+    // Step button bindings
+    $('step1Btn').onclick = () => setStep(1);
+    $('step2Btn').onclick = () => setStep(2);
+    $('step3Btn').onclick = () => setStep(3);
+    $('step4Btn').onclick = () => setStep(4);
+
+    // Color markup buttons
+    document.querySelectorAll('[data-color]').forEach(b => {
+      b.onclick = () => {
+        markColor = b.dataset.color;
+        document.querySelectorAll('[data-color]').forEach(x => x.classList.toggle('selected', x === b));
+        $('status').textContent = 'Markup pen updated. Drag over the tree canvas to draw proposed marks.';
+      };
+    });
+
+    // Digital cut tools
+    document.querySelectorAll('[data-tool]').forEach(b => {
+      b.onclick = () => {
+        tool = b.dataset.tool;
+        leaderStart = null;
+        document.querySelectorAll('[data-tool]').forEach(x => x.classList.toggle('selected', x === b));
+        updateSelected();
+        render();
+      };
+    });
+
+    // Freehand drawing listeners
+    svg.addEventListener('pointerdown', e => {
+      if (mode !== 'mark' || e.button !== 0) return;
+      e.preventDefault();
+      svg.setPointerCapture(e.pointerId);
+      const p = point(e);
+      active = { d: 'M' + p.x.toFixed(1) + ' ' + p.y.toFixed(1), color: markColor };
+      drawn.push(active);
+      render();
+    });
+
+    svg.addEventListener('pointermove', e => {
+      if (!active) return;
+      const p = point(e);
+      active.d += ' L' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+      const last = marks.lastChild;
+      if (last) last.setAttribute('d', active.d);
+    });
+
+    function endPointer() {
+      if (active) {
+        active = null;
+        save();
+      }
+    }
+    svg.addEventListener('pointerup', endPointer);
+    svg.addEventListener('pointercancel', endPointer);
+
+    // Tree arrangement is selected first and used to build the entire woody architecture.
+    function updateBudInfo() {
+      const chosen=budPattern!==null;
+      document.body.classList.toggle('tree-unselected',!chosen);
+      $('chooseAlternate').setAttribute('aria-pressed',budPattern==='alternate');
+      $('chooseOpposite').setAttribute('aria-pressed',budPattern==='opposite');
+      $('treeTypeStatus').textContent = !chosen ? 'Choose a tree to begin' : budPattern==='alternate' ? 'Alternate tree selected' : 'Opposite tree selected';
+      $('budPatternBadge').textContent = !chosen ? 'Not selected' : budPattern==='alternate' ? 'Alternate — staggered buds' : 'Opposite — paired buds';
+      $('budExplanation').textContent = budPattern==='opposite'
+        ? 'This tree begins with paired lateral branches at shared nodes. Surviving paired buds may produce unequal shoots after one season.'
+        : 'This tree begins with staggered laterals at separate nodes. New shoots emerge at separate alternating bud locations.';
+      $('drawing').setAttribute('aria-label','Interactive young shade tree with '+(budPattern==='opposite'?'opposite paired':'alternate staggered')+' branching, pruning tools, and one-year growth');
+    }
+    function selectTreePattern(next) {
+      if(budPattern===next) return;
+      if(budPattern!==null && (actions.length || drawn.length || $('notes').value.trim())) {
+        if(!confirm('Changing the original tree means starting a new specimen. This will clear pruning decisions, freehand marks, and notes. Download your work first. Continue?')) {
+          updateBudInfo();
+          return;
+        }
+      }
+      actions=[];drawn=[];leaderStart=null;active=null;$('notes').value='';
+      budPattern=next;
+      buildTree(next);
+      updateBudInfo();
+      setStep(1);
+      $('status').textContent='Selected '+next+' tree. The starting branches and one-year response now use this same bud arrangement. Begin Step 1.';
+      save();
+    }
+    $('chooseAlternate').onclick=()=>selectTreePattern('alternate');
+    $('chooseOpposite').onclick=()=>selectTreePattern('opposite');
+    updateBudInfo();
+
+    // Notes auto-save
+    $('notes').oninput = save;
+
+    // Undo actions
+    function performUndo() {
+      if (leaderStart) {
+        leaderStart = null;
+        $('status').textContent = 'Leader selection canceled.';
+        render();
+        return;
+      }
+      if (mode === 'mark' && drawn.length) {
+        drawn.pop();
+      } else if (actions.length) {
+        actions.pop();
+      } else if (drawn.length) {
+        drawn.pop();
+      }
+      $('status').textContent = 'Undid last arborist action.';
+      render();
+    }
+    $('undo').onclick = performUndo;
+    $('btnUndoPlate').onclick = performUndo;
+
+    // Reset tree
+    function performReset() {
+      if (confirm('Restore tree specimen to its original unpruned state? Your notes and freehand marks will be preserved.')) {
+        actions = [];
+        leaderStart = null;
+        $('status').textContent = 'Original young tree specimen restored.';
+        render();
+      }
+    }
+    $('reset').onclick = performReset;
+    $('quickResetTop').onclick = performReset;
+
+    // Cancel leader
+    $('cancelLeader').onclick = () => {
+      leaderStart = null;
+      $('status').textContent = 'Leader start point canceled. Click START again to begin.';
+      render();
+    };
+
+    // Clear marks
+    $('btnClearMarkPlate').onclick = () => {
+      if (confirm('Clear all freehand pen marks from the tree?')) {
+        drawn = [];
+        render();
+      }
+    };
+
+    // Export Utilities
+    function download(blob, name) {
+      const u = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = u;
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(u), 10000);
+    }
+
+    function source() {
+      const copy = svg.cloneNode(true);
+      copy.querySelectorAll('[data-hit],[data-junction]').forEach(x => x.remove());
+      copy.querySelectorAll('.wood-piece').forEach(x => {
+        x.removeAttribute('data-id');
+        x.classList.remove('wood-piece');
+      });
+      const desc = document.createElementNS(NS, 'desc');
+      desc.textContent = 'Merced College AGEH-08 • Student Field Notes: ' + $('notes').value;
+      copy.prepend(desc);
+      return new XMLSerializer().serializeToString(copy);
+    }
+
+    $('svgDownload').onclick = () => {
+      download(new Blob([source()], { type: 'image/svg+xml;charset=utf-8' }), 'MercedCollege_Tree_Pruning_Model.svg');
+    };
+
+    $('png').onclick = () => {
+      const img = new Image();
+      const u = URL.createObjectURL(new Blob([source()], { type: 'image/svg+xml;charset=utf-8' }));
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = 1800;
+        c.height = 2100;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 1800, 2100);
+        ctx.drawImage(img, 0, 0, 1800, 2100);
+        c.toBlob(b => {
+          if (b) download(b, 'MercedCollege_Tree_Pruning_Plate.png');
+        }, 'image/png');
+        URL.revokeObjectURL(u);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(u);
+        $('status').textContent = 'PNG rasterization failed in browser; try SVG export.';
+      };
+      img.src = u;
+    };
+
+    function exportDecisionRecord() {
+      const s = 'MERCED COLLEGE • DEPARTMENT OF AGRICULTURE & HORTICULTURE\n' +
+        'AGEH-08 • Landscape Maintenance • Tree Pruning & Growth Simulation Record\n' +
+        'Institution: Merced College | Project: Prune, Predict, Revisit\n' +
+        'Date: ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + '\n' +
+        '--------------------------------------------------------------------------------\n\n' +
+        'I. SIMULATION GROWTH MODEL PARAMETERS\n' +
+        'Bud Arrangement: ' + (budPattern === 'alternate' ? 'Alternate (Staggered Nodes)' : 'Opposite (Paired Nodes)') + '\n' +
+        'Vigor Level: High Vigor (Calibrated at 2x Extension for Visibility)\n' +
+        'Active Scaffold Limbs Preserved: ' + $('statRetainedLimbs').textContent + ' of 8 major scaffolds\n\n' +
+        'II. STUDENT-SELECTED CENTRAL LEADER\n' +
+        leaderSummaryText() + '\n\n' +
+        'III. RECORDED ARBORIST CUT ACTIONS (' + actions.length + ' Total)\n' +
+        (actions.length === 0 ? 'No cuts were performed.\n' : 
+          actions.map((a, i) => {
+            const n = byId[a.id];
+            let actionType = '';
+            if (a.kind === 'leader') actionType = 'Identified Central Leader (' + leaderShortDescription(a.start) + ' to ' + leaderShortDescription(a.stop) + ')';
+            else if (a.kind === 'remove') actionType = 'Collar Removal Cut (Basal Attachment)';
+            else if (a.kind === 'reduce') actionType = 'Reduction to Lateral Branch';
+            else if (a.kind === 'head') actionType = 'Heading Cut (Internodal)';
+            else actionType = 'Retained Branch';
+            return (i + 1) + '. ' + (n?.label || a.id) + ' [' + a.id + ']: ' + actionType +
+              (a.kind === 'reduce' || a.kind === 'head' ? ' at ' + Math.round(a.fraction * 100) + '% branch length' : '');
+          }).join('\n') + '\n\n'
+        ) +
+        'IV. STUDENT FIELD OBSERVATIONS & STRUCTURAL STRATEGY\n' +
+        ($('notes').value.trim() || 'No notes entered.') + '\n\n' +
+        '--------------------------------------------------------------------------------\n' +
+        'ANSI A300 NOTE: This simulation teaches architectural branch selection and response. Always inspect living branch bark ridges and collar anatomy in field practice.\n';
+      download(new Blob([s], { type: 'text/plain;charset=utf-8' }), 'MercedCollege_AGEH08_Pruning_Record.txt');
+    }
+
+    $('record').onclick = exportDecisionRecord;
+    $('quickExportRecordTop').onclick = exportDecisionRecord;
+    $('print').onclick = () => window.print();
+
+    // Initialize application at Step 1
+    setStep(1);
+  </script>
+</body>
+</html>
