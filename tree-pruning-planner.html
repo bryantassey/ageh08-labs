@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AGEH-08 • Tree Pruning Planner</title>
+<style>
+*{box-sizing:border-box}body{font:16px/1.55 system-ui,Arial,sans-serif;margin:0;background:#edf1ed;color:#213a31}header{background:#002855;color:white;border-bottom:5px solid #c99700;padding:22px max(18px,calc((100vw - 1200px)/2))}h1{margin:0;font-size:29px}main{max-width:1200px;margin:auto;padding:18px}.intro,.panel,.sheet{background:white;border:1px solid #cbd7ce;border-radius:12px;padding:16px;margin-bottom:16px}.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(310px,.8fr);gap:16px}.toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 12px}button{font:inherit;cursor:pointer;border:1px solid #82958a;background:white;padding:9px 12px;border-radius:7px}button.primary{background:#002855;color:white}button.selected{background:#deedd9;border:2px solid #365535;padding:8px 11px}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,svg [tabindex]:focus-visible{outline:3px solid #c99700;outline-offset:2px}.hint{font-size:14px;color:#52675c}.note{background:#fff5d8;border-left:4px solid #c99700;padding:10px}.status{min-height:2em;margin-top:10px;font-weight:600}#paper{background:#fff;border:1px solid #d5dfd6;border-radius:8px;overflow:hidden}svg{width:100%;height:auto;display:block;touch-action:none}.wood-piece{fill:none;stroke:#6f5946;stroke-linecap:round;stroke-linejoin:round;pointer-events:stroke;cursor:crosshair}.wood-piece:hover{stroke:#aa812a}.wood-piece.selected-piece{stroke:#a87816}.guide{pointer-events:none}.branch-label{font:bold 19px Arial;fill:#002855;pointer-events:none}.cut-marker{pointer-events:none}.leader-overlay{pointer-events:none}.leader-pill{background:#e6f3e6;border-left:4px solid #227b39;padding:10px;margin:10px 0;font-size:14px}#leaderHelp{display:none}#leaderHelp.show{display:block}textarea{width:100%;min-height:105px;font:inherit;padding:9px;border-radius:7px;border:1px solid #93a89a}select{width:100%;padding:10px;font:inherit;border-radius:6px;border:1px solid #82958a}label{font-weight:700;display:block;margin-top:12px}.key{display:flex;gap:12px;flex-wrap:wrap;font-size:13px}.key span{white-space:nowrap}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px}.cutlog{padding-left:21px}.cutlog li{padding:5px 0;border-bottom:1px solid #e3e9e3}.small{font-size:13px}.pill{display:inline-block;border:1px solid #d0d9d0;padding:2px 7px;border-radius:99px;font-size:12px}.mode-buttons{display:flex;gap:7px;flex-wrap:wrap}.mark-colors{display:none;flex-wrap:wrap;gap:6px}#paper.mark-mode{cursor:crosshair}@media(max-width:820px){.layout{grid-template-columns:1fr}header h1{font-size:25px}}@media print{header,.toolbar,.control-panel,.intro,.footer-controls,.hint{display:none!important}body,main{padding:0;background:#fff}.layout{display:block}.panel{border:0;padding:0}.sheet{page-break-before:always}}
+</style></head><body><header><div class="small">AGEH-08 • LANDSCAPE MAINTENANCE • INSTRUCTOR PROTOTYPE</div><h1>Tree Pruning Planner — Make the Cuts</h1>Original vector tree · branch-by-branch cuts and central leader selection</header>
+<main><div class="intro"><strong>Step 2: Turn your plan into actual cuts.</strong> Select a cut type, then click or tap the branch at the location where you want to cut. The portion beyond the cut disappears. For a reduction cut, select a lateral junction; for a removal cut, select a branch near its attachment. Choose <strong>Identify central leader</strong>, then click its START and STOP points to show the path the student believes should become the dominant leader. Switch to <strong>Freehand markup</strong> to draw instructor notes without altering the tree. <strong>This is a schematic teaching model, not a final cut-placement guide.</strong></div>
+<div class="layout"><div class="panel"><div class="toolbar mode-buttons"><button id="cutMode" class="selected" aria-pressed="true">Digital cut mode</button><button id="markMode" aria-pressed="false">Freehand markup</button></div><div class="toolbar" id="cutControls"><button data-tool="remove" class="selected">Removal</button><button data-tool="reduce">Reduction to lateral</button><button data-tool="head">Heading</button><button data-tool="leader">Retain — identify central leader</button><button data-tool="retain">Retain a branch</button></div><div class="leader-pill" id="leaderHelp" role="status">Select <strong>START</strong> on the trunk or proposed leader, then select <strong>STOP</strong> farther up the same growth path. A green line will show the student-selected central leader. This is their decision, not an automatic correctness check. <button id="cancelLeader" type="button">Cancel start</button></div><div class="toolbar mark-colors" id="markControls"><button data-color="#c62828">Red — remove</button><button data-color="#1769c2">Blue — reduce</button><button data-color="#ed7b13">Orange — head</button><button data-color="#227b39">Green — retain</button></div><div class="key"><span><i class="dot" style="background:#c62828"></i>Removal</span><span><i class="dot" style="background:#1769c2"></i>Reduction</span><span><i class="dot" style="background:#ed7b13"></i>Heading</span><span><i class="dot" style="background:#227b39"></i>Retain</span></div><div id="paper"><svg id="drawing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1050" aria-label="Interactive young shade tree with tapering trunk, eight major limbs and secondary branches"><rect width="900" height="1050" fill="white"/><text x="35" y="41" font-family="Arial" font-size="22" fill="#002855">YOUNG TREE • STRUCTURAL PRUNING</text><text x="35" y="71" font-family="Arial" font-size="15" fill="#607365">Click a wood segment to make a digital cut</text><g id="wood"></g><path d="M140 960 Q450 944 760 960" fill="none" stroke="#b2b9a9" stroke-width="2"/><g id="leaderOverlay" class="leader-overlay"></g><g id="cutMarkers"></g><g id="marks"></g><g id="labels"></g><text x="35" y="1013" font-family="Arial" font-size="16" fill="#52675c">Original teaching schematic · young shade tree · not to scale</text></svg></div><p id="status" class="status" role="status">Choose a cut, then click a branch.</p><p class="hint">Tip: Reduction is available only at an existing lateral junction. Click near the blue junction guide when that tool is selected. Remove a branch at its attachment—not in the middle. Use Undo to test alternatives.</p></div>
+<div class="panel control-panel"><h2 style="margin-top:0">Cut decisions</h2><div class="note" id="selectedInfo">Selected tool: <strong>Removal</strong>. Click near the base of a branch to remove it at its attachment.</div><div id="leaderSummary" class="leader-pill">No central leader selected yet.</div><h3>Recorded actions</h3><ol id="cutLog" class="cutlog"><li>No cuts yet.</li></ol><div class="toolbar"><button id="undo" class="primary">Undo last action</button><button id="reset">Restore original tree</button><button id="clearMarks">Clear markup</button></div><h3>Planning notes</h3><label for="notes" class="small">What structure are you trying to develop?</label><textarea id="notes" placeholder="Keep one dominant leader; subordinate a competing upright; preserve useful lower temporary branches..." ></textarea><h3>Export your work</h3><div class="toolbar footer-controls"><button id="png">Download PNG</button><button id="svgDownload">Download editable SVG</button><button id="record">Download decision record</button><button id="print">Print / Save PDF</button></div><p class="hint">Cut decisions are saved in this browser when possible. Export a file before clearing browser storage. SVG and PNG contain the tree as shown; the decision record includes the action history and notes.</p><p class="small"><strong>Instructional limitation:</strong> this prototype demonstrates removal of wood and retention of branch structure. It does not yet simulate next year's regrowth, wound formation, exact branch collar geometry, or pruning-dose calculations.</p></div></div></main>
+<script>
+const NS='http://www.w3.org/2000/svg',svg=document.getElementById('drawing'),wood=document.getElementById('wood'),leaderOverlay=document.getElementById('leaderOverlay'),markers=document.getElementById('cutMarkers'),marks=document.getElementById('marks'),labels=document.getElementById('labels');
+const $=id=>document.getElementById(id), KEY='ageh08-tree-digital-cuts-v2';
+// Original architecture reproduced from the saved AGEH-08 tree-markup.html.
+const trunk=[[450,950],[447,850],[452,725],[448,590],[455,460],[450,330],[462,200],[457,94]];
+const limbs=[
+ [[450,807],[388,768],[321,743],[247,703],[180,689]],
+ [[452,748],[527,716],[593,670],[658,642],[723,603]],
+ [[449,652],[390,598],[337,527],[293,454],[252,361],[228,276],[221,185]],
+ [[451,590],[515,519],[561,434],[588,337],[611,240],[642,143]],
+ [[453,496],[385,465],[325,420],[270,409],[198,364],[138,348]],
+ [[453,426],[510,399],[562,370],[631,362],[704,325],[758,286]],
+ [[452,333],[404,289],[369,230],[350,164]],
+ [[459,234],[510,203],[540,155]]
+];
+const widths=[6,7,10,10,6,6,5,4];
+const nodes=[];
+function addNode(id,parent,points,width,label){nodes.push({id,parent,points,width,label,baseLength:polyLen(points)})}
+function polyLen(ps){let x=0;for(let i=1;i<ps.length;i++)x+=Math.hypot(ps[i][0]-ps[i-1][0],ps[i][1]-ps[i-1][1]);return x;}
+addNode('T',null,trunk,15,'Central leader / trunk');
+limbs.forEach((pts,j)=>{
+ const id=String.fromCharCode(65+j);addNode(id,'T',pts,widths[j],'Major branch '+id);
+ for(let i=1;i<pts.length-1;i++){
+  const a=pts[i],prev=pts[i-1],dx=a[0]-prev[0],dy=a[1]-prev[1],len=Math.hypot(dx,dy),side=(i+j)%2?1:-1,L=39+(i*13+j*7)%34;
+  const q=[a[0]+dx/len*L*.6-dy/len*side*L*.65,a[1]+dy/len*L*.6+dx/len*side*L*.65-15];
+  const mid=[(a[0]+q[0])/2+side*4,(a[1]+q[1])/2];
+  addNode(id+'-'+i,id,[a,mid,q],Math.max(1.5,widths[j]*.38),'Lateral on '+id);
+  const r=[q[0]+side*15,q[1]-24];
+  addNode(id+'-'+i+'a',id+'-'+i,[[ (a[0]+q[0])/2,(a[1]+q[1])/2 ],r],1.3,'Small twig on '+id);
+ }
+});
+[[455,460,493,439],[450,366,420,339],[458,280,425,253],[460,176,488,148],[458,128,436,108]].forEach((v,i)=>addNode('T-'+(i+1),'T',[[v[0],v[1]],[v[2],v[3]]],2.5,'Leader lateral '+(i+1)));
+const byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
+let actions=[],drawn=[],mode='cut',tool='remove',markColor='#c62828',active=null,leaderStart=null;
+try{const saved=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('ageh08-tree-digital-cuts-v1'));if(saved){actions=Array.isArray(saved.actions)?saved.actions:[];drawn=Array.isArray(saved.drawn)?saved.drawn:[];$('notes').value=saved.notes||''}}catch{}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({actions,drawn,notes:$('notes').value}))}catch{}}
+function path(ps){return ps.map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+' '+p[1].toFixed(2)).join(' ')}
+function svgEl(tag,attrs,into){const el=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(([k,v])=>el.setAttribute(k,v));if(into)into.append(el);return el}
+function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+function nearest(points,p){let best={dist:Infinity,fraction:0,along:0,pos:points[0]};let traveled=0,total=polyLen(points);for(let i=0;i<points.length-1;i++){
+const a=points[i],b=points[i+1],dx=b[0]-a[0],dy=b[1]-a[1],len2=dx*dx+dy*dy,t=Math.max(0,Math.min(1,len2?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/len2:0)),q=[a[0]+t*dx,a[1]+t*dy],dist=Math.hypot(p[0]-q[0],p[1]-q[1]);if(dist<best.dist)best={dist,along:traveled+Math.sqrt(len2)*t,fraction:(traveled+Math.sqrt(len2)*t)/(total||1),pos:q};traveled+=Math.sqrt(len2)}return best}
+function pointAt(ps,fraction){const goal=polyLen(ps)*fraction;let done=0;for(let i=1;i<ps.length;i++){let d=Math.hypot(ps[i][0]-ps[i-1][0],ps[i][1]-ps[i-1][1]);if(done+d>=goal){let t=(goal-done)/(d||1);return [ps[i-1][0]+t*(ps[i][0]-ps[i-1][0]),ps[i-1][1]+t*(ps[i][1]-ps[i-1][1])]}done+=d}return ps.at(-1)}
+function clip(ps,f){if(f>=.999)return ps.slice();if(f<=.001)return [];let end=pointAt(ps,f),res=[ps[0]],goal=polyLen(ps)*f,done=0;for(let i=1;i<ps.length;i++){let d=Math.hypot(ps[i][0]-ps[i-1][0],ps[i][1]-ps[i-1][1]);if(done+d>=goal){res.push(end);break}res.push(ps[i]);done+=d}return res}
+function parentVisibleAt(node,all){if(!node.parent)return true;const par=all[node.parent];if(!par||!par.visible)return false;const q=nearest(byId[node.parent].points,node.points[0]);return q.fraction<=par.fraction+.012}
+function compute(){let result={};for(const n of nodes){let f=1,keep=true;for(const a of actions){if(a.id!==n.id)continue;if(a.kind==='retain'||a.kind==='leader')continue;if(a.kind==='remove'){f=0;keep=false}else f=Math.min(f,a.fraction)}result[n.id]={fraction:f,visible:keep&&f>.015};}
+ // Children are hidden if their attachment lies beyond the retained part of their parent.
+ for(const n of nodes){if(!parentVisibleAt(n,result))result[n.id].visible=false}
+ return result}
+function junctions(n,result){const lateralCandidates=nodes.filter(k=>k.parent===n.id&&result[k.id]?.visible).map(child=>({...nearest(n.points,child.points[0]),child:child.id}));return lateralCandidates.filter(x=>x.fraction>.08&&x.fraction<result[n.id].fraction-.025)}
+function updateSelected(){const messages={remove:'Removal: click near the attachment of a branch. The branch and attached twigs will disappear.',reduce:'Reduction: click an existing branch junction (blue circle) to shorten the parent while retaining its lateral.',head:'Heading: click between branch junctions. Everything distal to your cut disappears; the new shoots are reserved for the growth-response step.',retain:'Retain branch: click the branch to mark it for protection without making a cut.',leader:'Identify central leader: click START and then STOP on the connected path you think should be the dominant leader.'};$('selectedInfo').textContent=messages[tool];$('leaderHelp').classList.toggle('show',tool==='leader'&&mode==='cut');}
+// A student identifies a proposed leader by clicking its START and STOP.
+// The leader may continue on the trunk, or change direction onto a connected branch.
+function leaderRoute(start,stop){
+ if(start.id===stop.id){
+  if(stop.fraction<=start.fraction+.015)return null;
+  return [{id:start.id,from:start.fraction,to:stop.fraction}];
+ }
+ // A trunk-to-branch path is allowed; walk from the selected stop to the trunk.
+ if(start.id!=='T')return null;
+ let current=byId[stop.id],route=[],guard=0;
+ while(current&&current.id!=='T'&&guard++<10){
+  const origin=nearest(byId[current.parent].points,current.points[0]);
+  route.unshift({id:current.id,from:0,to:current.id===stop.id?stop.fraction:1});
+  if(current.parent==='T'){
+   if(origin.fraction<=start.fraction+.015)return null;
+   route.unshift({id:'T',from:start.fraction,to:origin.fraction});
+   return route;
+  }
+  current=byId[current.parent];
+ }
+ return null;
+}
+function leaderRouteVisible(route,states){
+ if(!route)return false;
+ return route.every(part=>states[part.id]?.visible&&part.to<=states[part.id].fraction+.002);
+}
+function selectLeaderPoint(id,pt,st){
+ const selection={id,fraction:Math.min(pt.fraction,st.fraction)};
+ if(!leaderStart){
+  leaderStart=selection;
+  $('status').textContent='START marked. Now click STOP farther up this trunk or along a connected branch.';
+  render();return;
+ }
+ const route=leaderRoute(leaderStart,selection);
+ if(!route){
+  $('status').textContent='STOP must lie farther along the same branch, or on a branch connected above a START on the trunk. Choose another STOP or Cancel start.';
+  return;
+ }
+ if(!leaderRouteVisible(route,compute())){
+  $('status').textContent='Part of that proposed leader has been cut away. Choose a path that still exists.';
+  return;
+ }
+ actions.push({id:'T',kind:'leader',start:leaderStart,stop:selection});
+ leaderStart=null;
+ $('status').textContent='Student-selected central leader marked in green. This records their choice, not a correct answer.';
+ render();
+}
+function partialPath(ps,from,to){
+ const all=clip(ps,to),origin=pointAt(ps,from),res=[origin];
+ let used=0,total=polyLen(ps);
+ for(let i=1;i<ps.length;i++){
+  used+=Math.hypot(ps[i][0]-ps[i-1][0],ps[i][1]-ps[i-1][1]);
+  const f=used/(total||1);
+  if(f>from+.0001&&f<to-.0001)res.push(ps[i]);
+ }
+ res.push(pointAt(ps,to));
+ return res;
+}
+function leaderSummaryText(){
+ const last=actions.filter(a=>a.kind==='leader').at(-1);
+ return last?'Student proposed a central leader from '+last.start.id+' ('+Math.round(last.start.fraction*100)+'%) to '+last.stop.id+' ('+Math.round(last.stop.fraction*100)+'%).':'Not selected.';
+}
+function renderLeader(states){
+ const last=actions.filter(a=>a.kind==='leader').at(-1);
+ const route=last?leaderRoute(last.start,last.stop):null;
+ const valid=route&&leaderRouteVisible(route,states);
+ $('leaderSummary').textContent=last?(valid?'Student-selected central leader: '+last.start.id+' → '+last.stop.id+' (highlighted in green).':'The student-selected leader was later interrupted by a cut. Select a new leader path.'):'No central leader selected yet.';
+ if(valid){
+  // Draw thin white halo and green center so the retained woody structure stays visible.
+  for(const part of route){
+   const points=partialPath(byId[part.id].points,part.from,part.to);
+   svgEl('path',{d:path(points),stroke:'#ffffff','stroke-width':13,fill:'none','stroke-linecap':'round','stroke-linejoin':'round',opacity:.88},leaderOverlay);
+   svgEl('path',{d:path(points),stroke:'#22843c','stroke-width':7,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},leaderOverlay);
+  }
+  const startP=pointAt(byId[last.start.id].points,last.start.fraction);
+  const endP=pointAt(byId[last.stop.id].points,last.stop.fraction);
+  for(const [pt,label] of [[startP,'START'],[endP,'STOP']]){
+   svgEl('circle',{cx:pt[0],cy:pt[1],r:10,fill:'#227b39',stroke:'#ffffff','stroke-width':3},leaderOverlay);
+   const tx=pt[0]+17,ty=pt[1]-13;
+   const text=svgEl('text',{x:tx,y:ty,fill:'#16682f','font-size':19,'font-weight':'bold','font-family':'Arial',stroke:'white','stroke-width':4,'paint-order':'stroke'},leaderOverlay);
+   text.textContent=label;
+  }
+  const text=svgEl('text',{x:550,y:92,fill:'#16682f','font-family':'Arial','font-size':18,'font-weight':'bold',stroke:'white','stroke-width':4,'paint-order':'stroke'},leaderOverlay);
+  text.textContent='Student-selected central leader';
+ }
+ if(leaderStart){
+  const pt=pointAt(byId[leaderStart.id].points,leaderStart.fraction);
+  svgEl('circle',{cx:pt[0],cy:pt[1],r:11,fill:'#227b39',stroke:'white','stroke-width':3},leaderOverlay);
+  const text=svgEl('text',{x:pt[0]+18,y:pt[1]-14,fill:'#16682f','font-family':'Arial','font-size':18,'font-weight':'bold',stroke:'white','stroke-width':3,'paint-order':'stroke'},leaderOverlay);
+  text.textContent='START — choose STOP';
+ }
+}
+function render(){wood.replaceChildren();leaderOverlay.replaceChildren();markers.replaceChildren();labels.replaceChildren();marks.replaceChildren();const states=compute();
+ for(const n of nodes){const st=states[n.id];if(!st.visible)continue;const pts=clip(n.points,st.fraction);if(pts.length<2)continue;const p=svgEl('path',{d:path(pts),stroke:'#6f5946','stroke-width':n.width,fill:'none','stroke-linecap':'round','stroke-linejoin':'round',class:'wood-piece','data-id':n.id},wood);
+ p.addEventListener('click',e=>{e.stopPropagation();if(mode==='cut')apply(n.id,[point(e).x,point(e).y])});}
+ // Interactive click points are also exposed as a transparent wider target for thin twigs.
+ for(const n of nodes){const st=states[n.id];if(!st.visible)continue;const pts=clip(n.points,st.fraction);if(pts.length<2)continue;const hit=svgEl('path',{d:path(pts),stroke:'transparent','stroke-width':Math.max(n.width+10,15),fill:'none','pointer-events':'stroke','data-hit':n.id},wood);hit.addEventListener('click',e=>{e.stopPropagation();if(mode==='cut')apply(n.id,[point(e).x,point(e).y])})}
+ if(tool==='reduce'&&mode==='cut')for(const n of nodes){if(!states[n.id].visible)continue;for(const j of junctions(n,states)){svgEl('circle',{cx:j.pos[0],cy:j.pos[1],r:8,fill:'#1769c2',stroke:'white','stroke-width':2,'data-junction':n.id,style:'cursor:pointer'},markers).addEventListener('click',e=>{e.stopPropagation();apply(n.id,[j.pos[0],j.pos[1]])});}}
+ for(const a of actions){if(a.kind==='retain'&&states[a.id]?.visible){const p=pointAt(byId[a.id].points,Math.min(.75,states[a.id].fraction*.8));svgEl('circle',{cx:p[0],cy:p[1],r:12,fill:'none',stroke:'#227b39','stroke-width':3,class:'cut-marker'},markers)}else if(a.kind!=='retain'&&a.kind!=='remove'){const p=pointAt(byId[a.id].points,a.fraction);svgEl('circle',{cx:p[0],cy:p[1],r:4,fill:a.kind==='reduce'?'#1769c2':'#ed7b13',stroke:'white','stroke-width':1.5,class:'cut-marker'},markers)}}
+ renderLeader(states);
+ for(const m of drawn)svgEl('path',{d:m.d,stroke:m.color,'stroke-width':6,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},marks);
+ for(let i=0;i<limbs.length;i++){const id=String.fromCharCode(65+i),n=byId[id],p=n.points.at(-1),visible=states[id].visible;if(!visible)continue;const st=states[id];const pt=pointAt(n.points,Math.min(.95,st.fraction));let x=pt[0]+(pt[0]<450?-22:22),y=pt[1]-14;svgEl('circle',{cx:x,cy:y,r:15,fill:'white',stroke:'#002855','stroke-width':1.5},labels);const t=svgEl('text',{x,y:y+6,'text-anchor':'middle',class:'branch-label'},labels);t.textContent=id;}
+ $('cutLog').replaceChildren();if(!actions.length){const li=document.createElement('li');li.textContent='No cuts yet.';$('cutLog').append(li)}for(const [i,a]of actions.entries()){const li=document.createElement('li'),n=byId[a.id];li.textContent=(i+1)+'. '+(n?.label||a.id)+' — '+(a.kind==='leader'?'student-selected central leader: '+a.start.id+' → '+a.stop.id:({remove:'removed',reduce:'reduced to retained lateral',head:'heading cut',retain:'retained'}[a.kind]));$('cutLog').append(li)}$('undo').disabled=!actions.length&&!drawn.length&&!leaderStart;save()}
+function apply(id,xy){const n=byId[id],st=compute()[id];if(!st?.visible){$('status').textContent='That branch was already removed.';return}const pt=nearest(n.points,xy);let frac=pt.fraction;
+ if(tool==='remove'){
+  // Respect branch attachments: removal only possible in the basal 20%.
+  if(frac>.24){$('status').textContent='Removal cut: choose this branch closer to its attachment (the first quarter). For a mid-branch cut, use Heading or Reduction.';return}
+  actions.push({id,kind:'remove',fraction:0});$('status').textContent=n.label+' removed at its attachment.';
+ }else if(tool==='reduce'){
+  const candidates=junctions(n,compute());const candidate=candidates.sort((a,b)=>Math.abs(a.along-pt.along)-Math.abs(b.along-pt.along))[0];
+  if(!candidate||Math.hypot(candidate.pos[0]-xy[0],candidate.pos[1]-xy[1])>32){$('status').textContent='Reduction needs an existing lateral. Click a blue junction on the branch; otherwise choose Heading.';return}
+  // Child at junction remains; selected parent loses its distal portion.
+  actions.push({id,kind:'reduce',fraction:candidate.fraction});$('status').textContent=n.label+' reduced back to lateral '+candidate.child+'.';
+ }else if(tool==='head'){
+  if(frac<.16||frac>st.fraction-.05){$('status').textContent='Select a position farther from the branch attachment and before the current tip.';return}
+  const near=junctions(n,compute()).some(j=>Math.abs(j.fraction-frac)<.035);
+  if(near){$('status').textContent='That is a lateral junction. Use Reduction, or choose a different position for Heading.';return}
+  actions.push({id,kind:'head',fraction:frac});$('status').textContent='Heading cut placed on '+n.label+'.';
+ }else if(tool==='leader'){
+  selectLeaderPoint(id,pt,st);return;
+ }else{
+  actions.push({id,kind:'retain',fraction:1});$('status').textContent=n.label+' marked for retention.';
+ }
+ render()}
+function setMode(v){mode=v;leaderStart=null;$('cutMode').classList.toggle('selected',v==='cut');$('markMode').classList.toggle('selected',v==='mark');$('cutMode').setAttribute('aria-pressed',v==='cut');$('markMode').setAttribute('aria-pressed',v==='mark');$('cutControls').style.display=v==='cut'?'flex':'none';$('markControls').style.display=v==='mark'?'flex':'none';$('paper').classList.toggle('mark-mode',v==='mark');$('status').textContent=v==='mark'?'Drag on the tree to make a colored markup stroke.':'Choose a cut, then click the tree.';render()}
+$('cutMode').onclick=()=>setMode('cut');$('markMode').onclick=()=>setMode('mark');
+document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{tool=b.dataset.tool;leaderStart=null;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('selected',x===b));updateSelected();render()});
+document.querySelectorAll('[data-color]').forEach(b=>{b.style.borderBottom='5px solid '+b.dataset.color;b.onclick=()=>{markColor=b.dataset.color;$('status').textContent='Markup color changed. Drag over the diagram to annotate.'}});
+svg.addEventListener('pointerdown',e=>{if(mode!=='mark'||e.button!==0)return;e.preventDefault();svg.setPointerCapture(e.pointerId);const p=point(e);active={d:'M'+p.x.toFixed(1)+' '+p.y.toFixed(1),color:markColor};drawn.push(active);render()});
+svg.addEventListener('pointermove',e=>{if(!active)return;const p=point(e);active.d+=' L'+p.x.toFixed(1)+' '+p.y.toFixed(1);const last=marks.lastChild;if(last)last.setAttribute('d',active.d)});
+function end(){if(active){active=null;save()}}svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+$('notes').oninput=save;
+$('undo').onclick=()=>{if(leaderStart){leaderStart=null;$('status').textContent='Leader start canceled.';render();return;}if(mode==='mark'&&drawn.length)drawn.pop();else if(actions.length)actions.pop();else drawn.pop();$('status').textContent='Undid last action.';render()};
+$('reset').onclick=()=>{if(confirm('Restore all branches to their original form? Your notes and freehand marks will stay.')){actions=[];leaderStart=null;$('status').textContent='Original tree restored.';render()}};
+$('cancelLeader').onclick=()=>{leaderStart=null;$('status').textContent='Leader start canceled. Choose a new START point.';render()};
+$('clearMarks').onclick=()=>{if(confirm('Clear all freehand marks?')){drawn=[];render()}};
+function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),10000)}
+function source(){const copy=svg.cloneNode(true);copy.querySelectorAll('[data-hit],[data-junction]').forEach(x=>x.remove());copy.querySelectorAll('.wood-piece').forEach(x=>{x.removeAttribute('data-id');x.classList.remove('wood-piece')});const desc=document.createElementNS(NS,'desc');desc.textContent='Instructor notes: '+$('notes').value;copy.prepend(desc);return new XMLSerializer().serializeToString(copy)}
+$('svgDownload').onclick=()=>download(new Blob([source()],{type:'image/svg+xml;charset=utf-8'}),'Tree_Pruning_Digital_Cuts.svg');
+$('png').onclick=()=>{const img=new Image(),u=URL.createObjectURL(new Blob([source()],{type:'image/svg+xml;charset=utf-8'}));img.onload=()=>{const c=document.createElement('canvas');c.width=1800;c.height=2100;c.getContext('2d').drawImage(img,0,0,1800,2100);c.toBlob(b=>{if(b)download(b,'Tree_Pruning_Digital_Cuts.png')},'image/png');URL.revokeObjectURL(u)};img.onerror=()=>{URL.revokeObjectURL(u);$('status').textContent='PNG export failed; try SVG export.'};img.src=u};
+$('record').onclick=()=>{const s='AGEH-08 | Tree Pruning Digital Cut Record\n\n'+actions.map((a,i)=>(i+1)+'. '+byId[a.id].label+' ('+a.id+'): '+(a.kind==='leader'?'student-selected central leader ('+a.start.id+' to '+a.stop.id+')':a.kind)+(a.kind==='reduce'||a.kind==='head'?' at '+Math.round(a.fraction*100)+'% of visible original branch length':'')).join('\n')+'\n\nSTUDENT-SELECTED CENTRAL LEADER\n'+leaderSummaryText()+'\n\nINSTRUCTOR NOTES\n'+$('notes').value+'\n\nIllustrative cut locations only; verify branch collar anatomy and appropriate lateral size in the field.\n';download(new Blob([s],{type:'text/plain;charset=utf-8'}),'Tree_Pruning_Decisions.txt')};
+$('print').onclick=()=>window.print();
+updateSelected();render();
+</script></body></html>
