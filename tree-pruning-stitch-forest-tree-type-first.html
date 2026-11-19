@@ -1020,6 +1020,8 @@
             </button>
           </div>
 
+          <span id="planSaveHint" style="font-size:12px;color:var(--forest-green);max-width:310px;line-height:1.4;">Before Step 2: use <strong>Download PNG</strong> to save your colored pruning plan. Your marks will be cleared after you confirm.</span>
+
           <!-- Step 2 Controls: Digital Cut Modes -->
           <div class="active-toolset" id="cutTools" style="display:none;">
             <button class="action-btn selected" data-tool="remove">
@@ -2032,6 +2034,22 @@
 
     // Four-Stage Flow Coordination
     function setStep(stepNum) {
+      // Step 1 markup is a separate submission artifact. Never remove it silently.
+      // Students must explicitly confirm they have downloaded their marked-up plan.
+      if (currentStep === 1 && stepNum !== 1 && drawn.length) {
+        const confirmed = window.confirm(
+          'Have you SAVED your freehand pruning plan for Canvas?\n\n' +
+          'Before moving on, use Download PNG to save your colored markup (Image 1).\n\n' +
+          'OK = I saved it. Clear the markup and continue to Step ' + stepNum + '.\n' +
+          'Cancel = Stay on Step 1 so I can save my plan.'
+        );
+        if (!confirmed) {
+          $('status').textContent = 'Step 1 is still open. Download PNG to save your marked-up pruning plan before continuing.';
+          return;
+        }
+        drawn = [];
+        save();
+      }
       currentStep = stepNum;
       leaderStart = null;
 
@@ -2043,6 +2061,7 @@
 
       // Switch toolbars on Specimen Plate
       $('markTools').style.display = stepNum === 1 ? 'flex' : 'none';
+      $('planSaveHint').style.display = stepNum === 1 ? 'inline' : 'none';
       $('cutTools').style.display = stepNum === 2 ? 'flex' : 'none';
       $('growthTools').style.display = stepNum === 3 ? 'flex' : 'none';
       $('reflectTools').style.display = stepNum === 4 ? 'flex' : 'none';
@@ -2054,7 +2073,7 @@
         $('currentToolCategory').textContent = 'Markup Drawing Pens (Step 1)';
         $('contextTitle').textContent = 'Stage 1 • Plan Your Pruning';
         $('contextBadge').textContent = 'Planning Phase';
-        $('stagePillText').textContent = 'Step 1: Mark proposed cuts with color pens before removing wood.';
+        $('stagePillText').textContent = 'Step 1: Mark your plan, download its PNG, then confirm to enter Digital Cuts.';
         $('selectedInfo').textContent = 'Study the young tree architecture. Identify your dominant central leader candidate and mark competing uprights or poorly spaced scaffold limbs in color.';
         $('status').textContent = 'Step 1: Choose a markup pen and draw proposed cuts directly onto the tree.';
       } else if (stepNum === 2) {
@@ -2063,7 +2082,7 @@
         $('currentToolCategory').textContent = 'Digital Pruning Cut Tools (Step 2)';
         $('contextTitle').textContent = 'Stage 2 • Make the Cuts';
         $('contextBadge').textContent = 'Active Pruning';
-        $('stagePillText').textContent = 'Step 2: Choose cut types and click branches to execute digital cuts.';
+        $('stagePillText').textContent = 'Step 2: Make the cuts on a clean tree after saving your freehand plan.';
         updateSelected();
         $('status').textContent = 'Step 2: Digital cuts active. Click branches to make removal, reduction, or heading cuts.';
       } else if (stepNum === 3) {
@@ -2266,7 +2285,7 @@
         ctx.fillRect(0, 0, 1800, 2100);
         ctx.drawImage(img, 0, 0, 1800, 2100);
         c.toBlob(b => {
-          if (b) download(b, 'MercedCollege_Tree_Pruning_Plate.png');
+          if (b) download(b, (currentStep === 1 ? '01_Freehand_Pruning_Plan.png' : currentStep === 2 ? '02_Digital_Pruning_Cuts.png' : '03_One_Year_Growth_Response.png'));
         }, 'image/png');
         URL.revokeObjectURL(u);
       };
